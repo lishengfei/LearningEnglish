@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="carloslobo.com.finalproject.Fragments.Student.StudentLoginFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Inicio de Sesión"
+        android:id="@+id/textView3"
+        android:layout_marginTop="92dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginRight="0dp"
+        android:fontFamily="sans-serif-light" />
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_alignEnd="@+id/textView3"
+        android:layout_alignParentBottom="true">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/studentUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView3"
+            android:layout_alignLeft="@+id/textView3"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_marginTop="51dp"
+            android:layout_alignRight="@+id/textView3"
+            android:layout_alignEnd="@+id/textView3">
+
+            <EditText
+                android:id="@+id/studentUserName_Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Usuario"
+                android:drawableLeft="@drawable/user"
+                android:drawablePadding="10dp"
+                android:inputType="text"
+                android:fontFamily="sans-serif-light"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="136dp"
+            android:layout_height="wrap_content"
+            android:text="Log In"
+            android:id="@+id/studentLoginButton"
+            android:layout_below="@+id/studentUserName"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:textColor="@color/White"
+            android:background="@drawable/button_primary"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="35dp"
+            android:fontFamily="sans-serif-light"/>
+    </LinearLayout>
+
+</RelativeLayout>

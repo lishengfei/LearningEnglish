@@ -1,0 +1,73 @@
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="carloslobo.com.finalproject.Fragments.Student.JoinGroupFragment">
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Unirse a un grupo"
+        android:id="@+id/textView11"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="68dp"
+        android:textColor="@color/colorPrimaryDark"
+
+        android:fontFamily="sans-serif-light"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/textView11"
+        android:layout_alignLeft="@+id/textView11"
+        android:layout_alignStart="@+id/textView11"
+        android:layout_alignRight="@+id/textView11"
+        android:layout_alignEnd="@+id/textView11"
+        android:layout_marginTop="35dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/GroupName"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical|center_horizontal">
+
+            <EditText
+                android:id="@+id/GroupName_Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del grupo"
+                android:inputType="text"
+
+                android:fontFamily="sans-serif-light"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Unirme"
+            android:id="@+id/joinGroupButton"
+
+            android:layout_below="@+id/GroupName"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_primary"
+
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/White"
+            android:textStyle="bold"
+            android:layout_marginTop="35dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>

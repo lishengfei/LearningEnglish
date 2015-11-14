@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/grouplist_cardview"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Nombre"
+                android:id="@+id/groupNameTV"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-light"
+                android:layout_toEndOf="@+id/teacherNameTV"
+                android:gravity="center_vertical|right"
+                android:paddingRight="55dp"
+                android:width="0dip"
+                android:layout_alignParentTop="true"
+                android:layout_above="@+id/StudentsNumber" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:id="@+id/classImage"
+                android:src="@drawable/class_icon"
+                android:layout_marginLeft="28dp"
+                android:layout_marginStart="28dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_above="@+id/teacherNameTV"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Students"
+                android:id="@+id/StudentsNumber"
+                android:layout_marginRight="54dp"
+                android:layout_marginEnd="54dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="italic" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profesor"
+                android:id="@+id/teacherNameTV"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/classImage"
+                android:layout_alignStart="@+id/classImage"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="italic"
+                android:layout_marginRight="10dp" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

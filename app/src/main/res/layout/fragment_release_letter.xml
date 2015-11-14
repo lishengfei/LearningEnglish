@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/liberar"
+        android:drawablePadding="25dp"
+        android:drawableLeft="@drawable/help"
+        android:textSize="20dp"
+        android:layout_marginBottom="50dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/CANCEL_button"
+            android:layout_width="149dp"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:layout_weight="0.81"
+            android:background="@android:color/transparent"
+            android:textColor="@color/White"
+            android:layout_marginRight="5dp"
+            android:shadowColor="@android:color/transparent" />
+
+        <Button
+            android:layout_width="173dp"
+            android:layout_height="wrap_content"
+            android:text="Ok"
+            android:id="@+id/OK_button"
+            android:textColor="@color/White"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="5dp" />
+    </LinearLayout>
+
+</LinearLayout>

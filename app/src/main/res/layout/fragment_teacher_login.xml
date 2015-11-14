@@ -1,0 +1,93 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="carloslobo.com.finalproject.Fragments.Teacher.TeacherLoginFragment"
+    android:id="@+id/TeacherLogin">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Inicio de Sesión"
+        android:id="@+id/textView3"
+        android:layout_marginTop="92dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30dp"
+        android:fontFamily="sans-serif-light"/>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_alignEnd="@+id/textView3"
+        android:layout_alignParentBottom="true">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/teacherUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView3"
+            android:layout_alignLeft="@+id/textView3"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_marginTop="51dp"
+            android:layout_alignRight="@+id/textView3"
+            android:layout_alignEnd="@+id/textView3">
+
+            <EditText
+                android:id="@+id/teacherUserName_Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Usuario"
+                android:inputType="text"
+                android:fontFamily="sans-serif-light"
+                android:drawableLeft="@drawable/user"
+                android:drawablePadding="10dp"
+                android:paddingRight="0dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/teacherPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/teacherUserName"
+            android:layout_alignLeft="@+id/teacherUserName"
+            android:layout_alignStart="@+id/teacherUserName"
+            android:layout_alignRight="@+id/teacherUserName"
+            android:layout_alignEnd="@+id/teacherUserName">
+
+            <EditText
+                android:id="@+id/teacherPassword_Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:fontFamily="sans-serif-light"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/pwd"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log In"
+            android:id="@+id/teacherLoginButton"
+            android:layout_below="@+id/teacherPassword"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/White"
+            android:background="@drawable/button_primary"
+            android:textStyle="bold"
+            android:layout_marginTop="60dp"
+            android:fontFamily="sans-serif-light"/>
+    </LinearLayout>
+
+
+</RelativeLayout>
