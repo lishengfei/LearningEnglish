@@ -99,30 +99,29 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
         int id = v.getId();
 
         FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        MainActivity Activity = ((MainActivity) getActivity());
 
         switch (id){
             case R.id.introductionButton:
-                if(!NoGroup)
-                {   int i = ((MainActivity)getActivity()).FragmentCount;
-                    mTransaction.replace(R.id.main_container, new LetterIntroductionFragment(),"Introduction " + i);
-                    ((MainActivity)getActivity()).FragmentCount +=1;
+                if(!NoGroup) {
+                     Activity.createGameManager();
+                    try {   Activity.getgManager().setWorkingLetter("8RBZaC0a0Z");}
+                    catch (ParseException e) {    e.printStackTrace();    }
 
-                    Log.d(TAG, "Fragment Introduction " + i + " in");
-                    Log.d(TAG, "Student will watch the introduction");
+                    Activity.getgManager().StartMode("Introduction");
                 }
                 else {
                     AlertStudent();}
-
             break;
 
             case R.id.practiceButton:
                 if(!NoGroup)
-                {   int i = ((MainActivity)getActivity()).FragmentCount;
-                    mTransaction.replace(R.id.main_container, new LetterPracticeFragment(),"Practice " + i);
-                    ((MainActivity)getActivity()).FragmentCount +=1;
+                {   Activity.createGameManager();
+                    try {   Activity.getgManager().setWorkingLetter("8RBZaC0a0Z");}
+                    catch (ParseException e) {    e.printStackTrace();    }
 
-                    Log.d(TAG, "Fragment Practice " + i + " in");
-                    Log.d(TAG, "Student will practice");
+                    Activity.getgManager().StartMode("Practice");
+
                 }
                 else {
                     AlertStudent();}
@@ -131,12 +130,11 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
 
             case R.id.testButton:
                 if(!NoGroup)
-                {   int i = ((MainActivity)getActivity()).FragmentCount;
-                    mTransaction.replace(R.id.main_container, new LetterTestFragment(),"Test " + i);
-                    ((MainActivity)getActivity()).FragmentCount +=1;
+                {   Activity.createGameManager();
+                    try {   Activity.getgManager().setWorkingLetter("8RBZaC0a0Z");}
+                    catch (ParseException e) {    e.printStackTrace();    }
 
-                    Log.d(TAG, "Fragment Test " + i + " in");
-                    Log.d(TAG, "Student will do the test");
+                    Activity.getgManager().StartMode("Test");
 
                 }
                 else {

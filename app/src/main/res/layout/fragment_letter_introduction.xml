@@ -12,11 +12,12 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:id="@+id/letterIntroductionIMG"
+            android:id="@+id/letterPreviewImage"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="20dp"
-            android:src="@drawable/placeholder" />
+            android:src="@drawable/placeholder"
+            android:background="@drawable/img_border"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,7 +25,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Sample Text"
             android:id="@+id/WordExample"
-            android:layout_below="@+id/letterIntroductionIMG"
+            android:layout_below="@+id/letterPreviewImage"
             android:layout_centerHorizontal="true"
             android:fontFamily="sans-serif-light"
             android:layout_gravity="center_horizontal"
@@ -32,7 +33,7 @@
             />
 
         <Button
-            android:layout_width="117dp"
+            android:layout_width="137dp"
             android:layout_height="wrap_content"
             android:text="OK!"
             android:id="@+id/letterIntroductionButton"

@@ -4,6 +4,7 @@ package carloslobo.com.finalproject.Fragments.Student;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -49,6 +50,7 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
 
         initViews(rootView);
         initListeners();
+        HideAppBarLayout();
 
         return rootView;
     }
@@ -78,6 +80,10 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
         return true;
     }
 
+    private void HideAppBarLayout(){
+        AppBarLayout v = (AppBarLayout) getActivity().findViewById(R.id.test);
+        v.setExpanded(false, true);
+    }
 
     @Override
     public void onClick(View v) {
@@ -86,9 +92,7 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
             case R.id.joinGroupButton:
                 if (validateInput()) {
                     Log.d(TAG,"Student is joining a group");
-                    new SendData().execute();
-                }
-
+                    new SendData().execute();}
                 break;
         }
     }

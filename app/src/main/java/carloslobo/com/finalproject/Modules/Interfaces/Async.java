@@ -9,6 +9,6 @@ import com.parse.ParseObject;
 public interface Async {
     void Setup();
     void Query() throws ParseException;
-    void ProcessQuery(ParseObject JSON);
+    void ProcessQuery(ParseObject JSON) throws ParseException;
     void Finalize(boolean Success);
 }

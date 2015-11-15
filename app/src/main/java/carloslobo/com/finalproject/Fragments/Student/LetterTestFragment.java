@@ -14,11 +14,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import org.w3c.dom.Text;
 
 import carloslobo.com.finalproject.Core.MainActivity;
+import carloslobo.com.finalproject.Modules.GameManager;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
+import carloslobo.com.finalproject.Modules.Question;
 import carloslobo.com.finalproject.R;
 
 /**
@@ -27,8 +30,10 @@ import carloslobo.com.finalproject.R;
 public class LetterTestFragment extends Fragment implements Init,View.OnClickListener{
 
     private final static String TAG = LetterTestFragment.class.getName();
+    private GameManager GM;
 
     private TextInputLayout Answer;
+    private ImageView mImageView;
     private Button mButton;
 
     public LetterTestFragment() {
@@ -39,6 +44,8 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_letter_test, container, false);
+
+        GM = ((MainActivity) getActivity()).getgManager();
 
         initViews(rootView);
         initListeners();
@@ -53,6 +60,11 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
     public void initViews(View rootview) {
         Answer = (TextInputLayout) rootview.findViewById(R.id.studentAnswer);
         mButton = (Button) rootview.findViewById(R.id.saveTestButton);
+
+        mImageView = (ImageView) rootview.findViewById(R.id.testImage);
+
+        Question CurrentQuestion = GM.getQuestion(GM.getCurrentExercise());
+        mImageView.setImageBitmap(CurrentQuestion.getImage());
     }
 
     @Override
@@ -60,14 +72,16 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
         mButton.setOnClickListener(this);
     }
 
-    private void validateInput() {
+    private boolean validateInput() {
         String answer = Answer.getEditText().getText().toString();
 
         if (answer.isEmpty()) {
             if (answer.isEmpty())
                 Answer.setError("La respuesta no puede estar vacía");
-            return;
+            return false;
         }
+
+        return true;
     }
 
     private void HideAppBarLayout(){
@@ -98,7 +112,12 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
 
                         if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             Log.i(TAG, "Right to Left");
-                            Transaction();
+
+                            if (GM.isCompleted())
+                                GM.Finish();
+                            else
+                                GM.FetchNewQuestion();
+
                         }
 
                         return super.onFling(e1, e2, velocityX, velocityY);
@@ -119,44 +138,17 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
         int id = v.getId();
         switch (id){
             case R.id.saveTestButton:
-                validateInput();
-                getActivity().onBackPressed();
+                if(validateInput()){
+                    Log.d(TAG,"Student answered the question.");
 
-                Log.d(TAG,"Student answered the question.");
-                break;
+                    if (GM.isCompleted())
+                        GM.Finish();
+                    else
+                        GM.FetchNewQuestion();
+
+                    break;}
         }
     }
 
-    private void Transaction(){
-        /*FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
 
-        mTransaction.replace(R.id.main_container, new LetterTestFragment(),"Test");
-        mTransaction.addToBackStack("Test");
-        mTransaction.commit();
-
-        ((MainActivity)getActivity()).FragmentCount +=1;*/
-
-
-        int i = ((MainActivity)getActivity()).FragmentCount;
-        FragmentManager FM = getActivity().getSupportFragmentManager();
-
-        //Add the new fragment
-        FragmentTransaction mTransaction = FM.beginTransaction();
-        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        mTransaction.replace(R.id.main_container, new LetterTestFragment(), "Test " + i);
-        mTransaction.commit();
-        Log.d(TAG, "Fragment Test " + i + " in");
-
-
-        //Delete every old fragment
-        FragmentTransaction nTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        nTransaction.remove(FM.findFragmentByTag( "Test " + (i-1) ));
-        nTransaction.commit();
-        FM.executePendingTransactions();
-        Log.d(TAG, "Fragment Test " + (i-1) + " out");
-
-        ((MainActivity) getActivity()).FragmentCount +=1;
-
-    }
 }

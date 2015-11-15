@@ -15,9 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import carloslobo.com.finalproject.Core.MainActivity;
+import carloslobo.com.finalproject.Modules.GameManager;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
+import carloslobo.com.finalproject.Modules.Question;
 import carloslobo.com.finalproject.R;
 
 /**
@@ -27,18 +30,22 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
 
     private final static String TAG = LetterPracticeFragment.class.getName();
 
+    private TextView mTextView;
     private ImageView mImageView;
     private RadioButton OptionA,OptionB,OptionC,OptionD;
     private Button mButton;
 
-    public LetterPracticeFragment() {
-    }
+    private GameManager GM;
+
+    public LetterPracticeFragment() {   }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootview = inflater.inflate(R.layout.fragment_letter_practice, container, false);
+
+        GM = ((MainActivity) getActivity()).getgManager();
 
         initViews(rootview);
         initListeners();
@@ -51,12 +58,21 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
 
     @Override
     public void initViews(View rootview) {
+        mTextView = (TextView) rootview.findViewById(R.id.chosenLetter);
         mImageView = (ImageView) rootview.findViewById(R.id.letterPreviewImage);
         OptionA = (RadioButton) rootview.findViewById(R.id.optionA);
         OptionB = (RadioButton) rootview.findViewById(R.id.optionB);
         OptionC = (RadioButton) rootview.findViewById(R.id.optionC);
         OptionD = (RadioButton) rootview.findViewById(R.id.optionD);
         mButton = (Button) rootview.findViewById(R.id.finishPracticeButton);
+
+        Question CurrentQuestion = GM.getQuestion(GM.getCurrentExercise());
+        mTextView.setText("Letra: " + GM.getLetter());
+        mImageView.setImageBitmap(CurrentQuestion.getImage());
+        OptionA.setText(CurrentQuestion.getOption(0));
+        OptionB.setText(CurrentQuestion.getOption(1));
+        OptionC.setText(CurrentQuestion.getOption(2));
+        OptionD.setText(CurrentQuestion.getOption(3));
     }
 
     @Override
@@ -89,12 +105,16 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
                         Log.i(TAG, "onFling has been called!");
                         final int SWIPE_MIN_DISTANCE = 120;
                         final int SWIPE_THRESHOLD_VELOCITY = 200;
+                        if(e1!=null && e2!=null) {
+                            if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                                Log.i(TAG, "Right to Left");
 
-                        if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                            Log.i(TAG, "Right to Left");
-                            Transaction();
+                                if (GM.getCurrentExercise() < GM.getExercisesNumber())
+                                    GM.FetchNewQuestion();
+                                else
+                                    GM.Terminate();
+                            }
                         }
-
                         return super.onFling(e1, e2, velocityX, velocityY);
                     }
                 });
@@ -113,38 +133,16 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
         int id = v.getId();
         switch (id){
             case R.id.finishPracticeButton:
-                getActivity().onBackPressed();
+
                 Log.d(TAG,"Student chose an answer");
+
+                if (GM.isCompleted())
+                    GM.Finish();
+                else
+                    GM.FetchNewQuestion();
+
                 break;
         }
     }
 
-    private void Transaction(){
-/*        FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        mTransaction.replace(R.id.main_container, new LetterPracticeFragment());
-        mTransaction.addToBackStack("Practice");
-        mTransaction.commit();
-
-        ((MainActivity)getActivity()).FragmentCount +=1;*/
-
-        int i = ((MainActivity)getActivity()).FragmentCount;
-        FragmentManager FM = getActivity().getSupportFragmentManager();
-
-        //Add the new fragment
-        FragmentTransaction mTransaction = FM.beginTransaction();
-        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        mTransaction.replace(R.id.main_container, new LetterPracticeFragment(), "Practice " + i);
-        mTransaction.commit();
-        Log.d(TAG, "Fragment Practice " + i + " in");
-
-        //Delete every old fragment
-        FragmentTransaction nTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        nTransaction.remove(FM.findFragmentByTag( "Practice " + (i-1) ));
-        nTransaction.commit();
-        FM.executePendingTransactions();
-        Log.d(TAG, "Fragment Practice " + (i-1) + " out");
-
-        ((MainActivity) getActivity()).FragmentCount +=1;
-    }
 }

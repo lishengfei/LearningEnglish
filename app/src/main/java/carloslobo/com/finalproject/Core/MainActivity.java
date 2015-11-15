@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.parse.ParseObject;
+
 import junit.framework.Test;
 
 import java.util.ArrayList;
@@ -36,14 +38,31 @@ import carloslobo.com.finalproject.Fragments.Teacher.GroupListFragment;
 import carloslobo.com.finalproject.Fragments.Teacher.TeacherLoginFragment;
 import carloslobo.com.finalproject.Fragments.Teacher.TeacherMenuFragment;
 import carloslobo.com.finalproject.Fragments.WelcomeFragment;
+import carloslobo.com.finalproject.Modules.GameManager;
 import carloslobo.com.finalproject.R;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private final static String TAG = MainActivity.class.getName();
-    public int FragmentCount = 0;
-
+    private int FragmentCount = 0;
     private FragmentManager mManager  = getSupportFragmentManager();
+    private GameManager gManager;
+
+    public GameManager getgManager() {
+        return gManager;
+    }
+
+    public void addFragmentCount() {
+        this.FragmentCount = FragmentCount+1;
+    }
+
+    public int getFragmentCount() {
+        return FragmentCount;
+    }
+
+    public void createGameManager(){
+        gManager = new GameManager(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.main_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         if(savedInstanceState==null){
             FragmentTransaction mTransaction = mManager.beginTransaction();
@@ -73,20 +94,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-
-
-            if(!CloseModes())
-            {
-                if (mManager.getBackStackEntryCount() > 0)
-                    mManager.popBackStack();
-                else
-                    this.finish();
-            }
+            drawer.closeDrawer(GravityCompat.START);}
+        else {
+                if(!CloseModes()) {
+                    if (mManager.getBackStackEntryCount() > 0)
+                        mManager.popBackStack();
+                    else
+                        this.finish();
+                }
 
             HideBanners();
-
         }
     }
 
@@ -104,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private boolean CloseModes(){
+
+        if(gManager!=null)
+            gManager.Terminate();
 
         /*We need to look for any of these 3 fragments,
         if they're visible they need to be removed since popBackStack doesn't remove them*/
@@ -152,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 FragmentCount = 0;
             }
 
-            BackToTheMenu.replace(R.id.main_container,mManager.findFragmentByTag("StudentMenu"));
+            BackToTheMenu.replace(R.id.main_container, mManager.findFragmentByTag("StudentMenu"));
             BackToTheMenu.commit();
             Log.d(TAG, "Welcome back to the student menu <3");
 
