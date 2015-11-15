@@ -219,6 +219,7 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
 
         @Override
         public void ProcessQuery(ParseObject JSON) {
+            ((MainActivity) getActivity()).setStudentTeacher(JSON.getObjectId());
             Log.d(TAG, "A JSON object was processed");
         }
 

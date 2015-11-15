@@ -12,6 +12,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,23 +33,36 @@ import carloslobo.com.finalproject.R;
  */
 public class GameManager {
 
+    //Basic
     private final String TAG = GameManager.class.getName();
     private final MainActivity mContext;
 
+    //Transaction TAGs
     private String TARGET_TAG;
     private String NEXT_TARGET_TAG;
 
+    //For Question fetching and navigating
     private int nExercises = 0;
     private int CurrentExercise = 1;
 
+    //To retreive info from Parse
     private ParseObject WorkingLetter;
     private String LETTER;
     private ParseObject WorkingGroup;
-
     private ArrayList<Question> QuestionsSet = new ArrayList();
+
+    //Exams Params
+    private ParseObject Progress;
+    private int nWrong;
+    private int nOK;
+    private float Score;
+    private String MODULE;
+
 
     public GameManager(MainActivity mContext){
         this.mContext = mContext;
+        this.Progress = new ParseObject("Grades");
+        Progress.put("Student", ParseUser.getCurrentUser());
         this.nExercises =  3;
     }
 
@@ -96,6 +110,7 @@ public class GameManager {
     public void StartMode(String Mode){
 
         int i = mContext.getFragmentCount();
+        MODULE = Mode;
         TARGET_TAG = Mode + " " + i;
 
         mContext.addFragmentCount();
@@ -113,13 +128,13 @@ public class GameManager {
 
         FragmentTransaction mTransaction = mContext.getSupportFragmentManager().beginTransaction();
 
-        if(TARGET_TAG.contains("Introduction"))
+        if(MODULE.equals("Introduction"))
             mTransaction.replace(R.id.main_container, new LetterIntroductionFragment(), TARGET_TAG);
 
-        if(TARGET_TAG.contains("Practice"))
+        if(MODULE.equals("Practice"))
             mTransaction.replace(R.id.main_container, new LetterPracticeFragment(), TARGET_TAG);
 
-        if(TARGET_TAG.contains("Test"))
+        if(MODULE.equals("Test"))
             mTransaction.replace(R.id.main_container, new LetterTestFragment(), TARGET_TAG);
 
         mTransaction.commit();
@@ -137,12 +152,38 @@ public class GameManager {
     }
 
     public void Finish(){
-        Terminate();
-        mContext.onBackPressed();
+
+        Score = (float) ((nOK * 100.0) / (nOK + nWrong));
+        Progress.put("Score",Score);
+        Progress.put("Letter",WorkingLetter);
+        Progress.put("Teacher", ParseObject.createWithoutData("_User", mContext.getCurrentTeacher()));
+        Progress.put("Module", MODULE);
+
+        new SaveProgress().execute();
+
+    }
+
+    public void SaveAnswer(String Input){
+
+        if (this.isCompleted()) {
+            this.Finish();}
+        else
+            {
+                this.UpdateProgress(Input);
+                this.FetchNewQuestion();
+            }
+    }
+
+    private void UpdateProgress(String Input){
+            Question CurrentQuestion = getQuestion(getCurrentExercise());
+            if(Input.equals(CurrentQuestion.getAnswer()))
+                Progress.put("Good",++nOK);
+            else
+                Progress.put("Wrong",++nWrong);
     }
 
     public void FetchNewQuestion(){
-        if(QuestionsSet.size()>0)
+        if(QuestionsSet.size() > 0)
             QuestionsSet.set(getCurrentExercise(),null);
 
         this.NextQuestion();
@@ -156,15 +197,15 @@ public class GameManager {
 
         Fragment NEW_FRAGMENT = null;
 
-        if(TARGET_TAG.contains("Introduction")) {
+        if(MODULE.equals("Introduction")) {
             NEW_FRAGMENT = new LetterIntroductionFragment();
             FRAGMENT_TYPE = "Introduction ";}
 
-        else if(TARGET_TAG.contains("Practice")){
+        else if(MODULE.equals("Practice")) {
             NEW_FRAGMENT = new LetterPracticeFragment();
             FRAGMENT_TYPE = "Practice ";}
 
-        else if(TARGET_TAG.contains("Test")) {
+        else if(MODULE.equals("Test")) {
             NEW_FRAGMENT = new LetterTestFragment();
             FRAGMENT_TYPE = "Test ";}
 
@@ -281,6 +322,66 @@ public class GameManager {
                 Log.d(TAG, "Questions were loaded");
             }
 
+        }
+
+    }
+
+    private class SaveProgress extends AsyncTask<Void,Void,Void> implements Async{
+
+        private ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Setup();
+        }
+
+        @Override
+        public void Setup() {
+            pDialog = new ProgressDialog(mContext);
+            pDialog.setTitle("Saving this intent");
+            pDialog.setMessage("This may take a moment");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+
+                Score = (float) ((nOK * 100.0) / (nOK + nWrong));
+                Progress.put("Score",Score);
+                Progress.put("Letter",WorkingLetter);
+                Progress.put("Teacher", ParseObject.createWithoutData("_User",mContext.getCurrentTeacher() ));
+                Progress.put("Module", MODULE);
+
+                Progress.save();
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            pDialog.dismiss();
+            Terminate();
+            mContext.onBackPressed();
+        }
+
+        @Override
+        public void Query() throws ParseException {
+            return;
+        }
+        @Override
+        public void ProcessQuery(ParseObject JSON) throws ParseException {
+            return;
+        }
+        @Override
+        public void Finalize(boolean Success) {
+            return;
         }
 
     }

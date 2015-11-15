@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int FragmentCount = 0;
     private FragmentManager mManager  = getSupportFragmentManager();
     private GameManager gManager;
+    private String CurrentTeacher;
 
     public GameManager getgManager() {
         return gManager;
@@ -62,6 +63,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void createGameManager(){
         gManager = new GameManager(this);
+    }
+
+    public void setStudentTeacher(String Id){
+        CurrentTeacher = Id;
+    }
+
+    public String getCurrentTeacher() {
+        return CurrentTeacher;
     }
 
     @Override

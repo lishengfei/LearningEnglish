@@ -70,7 +70,7 @@
             android:orientation="vertical"
             android:gravity="center_vertical|center_horizontal"
             android:layout_below="@+id/letterPreviewImage"
-            android:id="@+id/radioGroup2"
+            android:id="@+id/PracticeRadioGroup"
             android:layout_marginBottom="25dp">
 
             <RadioButton
@@ -94,7 +94,8 @@
                 android:layout_above="@+id/optionA"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"/>
+                android:fontFamily="sans-serif-light"
+                android:checked="false" />
 
             <RadioButton
                 android:layout_width="wrap_content"

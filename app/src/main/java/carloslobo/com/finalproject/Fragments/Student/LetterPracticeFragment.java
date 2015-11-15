@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import carloslobo.com.finalproject.Core.MainActivity;
@@ -33,9 +34,11 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
     private TextView mTextView;
     private ImageView mImageView;
     private RadioButton OptionA,OptionB,OptionC,OptionD;
+    private String CurrentAnswer;
     private Button mButton;
 
     private GameManager GM;
+    private RadioGroup mRadioGroup;
 
     public LetterPracticeFragment() {   }
 
@@ -58,6 +61,9 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
 
     @Override
     public void initViews(View rootview) {
+
+        mRadioGroup = (RadioGroup) rootview.findViewById(R.id.PracticeRadioGroup);
+
         mTextView = (TextView) rootview.findViewById(R.id.chosenLetter);
         mImageView = (ImageView) rootview.findViewById(R.id.letterPreviewImage);
         OptionA = (RadioButton) rootview.findViewById(R.id.optionA);
@@ -109,10 +115,7 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 Log.i(TAG, "Right to Left");
 
-                                if (GM.getCurrentExercise() < GM.getExercisesNumber())
-                                    GM.FetchNewQuestion();
-                                else
-                                    GM.Terminate();
+                                GM.SaveAnswer(CurrentAnswer);
                             }
                         }
                         return super.onFling(e1, e2, velocityX, velocityY);
@@ -128,6 +131,34 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
 
     }
 
+    public boolean validInput(){
+
+        int CheckedId = mRadioGroup.getCheckedRadioButtonId();
+        final int A = OptionA.getId();
+        final int B = OptionB.getId();
+        int C = OptionC.getId();
+        int D = OptionD.getId();
+
+        if(CheckedId!=-1){
+            if(A==CheckedId){
+                CurrentAnswer = OptionA.getText().toString();
+            }
+            else if(B==CheckedId){
+                CurrentAnswer = OptionB.getText().toString();
+            }
+            else if(C==CheckedId){
+                CurrentAnswer = OptionC.getText().toString();
+            }
+            else if(D==CheckedId){
+                CurrentAnswer = OptionD.getText().toString();}
+
+            return true;
+        }
+
+
+        return false;
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -135,11 +166,9 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
             case R.id.finishPracticeButton:
 
                 Log.d(TAG,"Student chose an answer");
-
-                if (GM.isCompleted())
-                    GM.Finish();
-                else
-                    GM.FetchNewQuestion();
+                if(validInput()) {
+                    GM.SaveAnswer(CurrentAnswer);
+                }
 
                 break;
         }

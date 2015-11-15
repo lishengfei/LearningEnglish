@@ -50,7 +50,6 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
         initViews(rootView);
         initListeners();
         HideAppBarLayout();
-        initGestures(rootView);
 
         return rootView;
     }
@@ -89,49 +88,7 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
         v.setExpanded(false, true);
     }
 
-    private void initGestures(View rootView){
-        final GestureDetector gesture = new GestureDetector(getActivity(),
-                new GestureDetector.SimpleOnGestureListener() {
 
-                    @Override
-                    public boolean onDown(MotionEvent e) {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                        return super.onScroll(e1, e2, distanceX, distanceY);
-                    }
-
-                    @Override
-                    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-                        Log.i(TAG, "onFling has been called!");
-                        final int SWIPE_MIN_DISTANCE = 120;
-                        final int SWIPE_THRESHOLD_VELOCITY = 200;
-
-                        if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                            Log.i(TAG, "Right to Left");
-
-                            if (GM.isCompleted())
-                                GM.Finish();
-                            else
-                                GM.FetchNewQuestion();
-
-                        }
-
-                        return super.onFling(e1, e2, velocityX, velocityY);
-                    }
-                });
-
-        rootView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gesture.onTouchEvent(event);
-            }
-        });
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -141,10 +98,7 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
                 if(validateInput()){
                     Log.d(TAG,"Student answered the question.");
 
-                    if (GM.isCompleted())
-                        GM.Finish();
-                    else
-                        GM.FetchNewQuestion();
+                    GM.SaveAnswer(Answer.getEditText().getText().toString());
 
                     break;}
         }
