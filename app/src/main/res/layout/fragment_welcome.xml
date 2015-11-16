@@ -1,8 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="carloslobo.com.finalproject.Fragments.WelcomeFragment"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:gravity="center_vertical|center_horizontal">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -10,53 +12,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Bienvenido"
+        android:text="@string/Welcome"
         android:id="@+id/textView2"
         android:textColor="@color/White"
-        android:layout_marginBottom="87dp"
-        android:textSize="35dp"
-        android:layout_above="@+id/radioGroup"
-        android:layout_centerHorizontal="true"
+        android:textSize="35sp"
         android:fontFamily="sans-serif-light"/>
 
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/radioGroup"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        >
+        android:layout_marginTop="50dp">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Estudiante"
+            android:text="@string/StudentRadioButton"
             android:id="@+id/studentRadio"
             android:layout_gravity="center_horizontal"
             android:checked="false"
             android:textColor="@color/White"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:fontFamily="sans-serif-light"
             android:clickable="false" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profesor"
+            android:text="@string/TeacherRadioButton"
             android:id="@+id/teacherRadio"
             android:checked="false"
             android:textColor="@color/White"
             android:layout_marginTop="25dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:fontFamily="sans-serif-light"/>
     </RadioGroup>
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-</RelativeLayout>
+</LinearLayout>

@@ -4,8 +4,6 @@ package carloslobo.com.finalproject.Fragments.Student;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -31,14 +29,16 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
 
     private final static String TAG = LetterPracticeFragment.class.getName();
 
+    //Layout
     private TextView mTextView;
     private ImageView mImageView;
     private RadioButton OptionA,OptionB,OptionC,OptionD;
     private String CurrentAnswer;
     private Button mButton;
-
-    private GameManager GM;
     private RadioGroup mRadioGroup;
+
+    //Manager
+    private GameManager GM;
 
     public LetterPracticeFragment() {   }
 
@@ -46,31 +46,31 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootview = inflater.inflate(R.layout.fragment_letter_practice, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_letter_practice, container, false);
 
-        GM = ((MainActivity) getActivity()).getgManager();
+        GM = ((MainActivity) getActivity()).getGManager();
 
-        initViews(rootview);
+        initViews(rootView);
         initListeners();
         HideAppBarLayout();
-        initGestures(rootview);
+        initGestures(rootView);
 
-        return rootview;
+        return rootView;
     }
 
 
     @Override
-    public void initViews(View rootview) {
+    public void initViews(View rootView) {
 
-        mRadioGroup = (RadioGroup) rootview.findViewById(R.id.PracticeRadioGroup);
+        mRadioGroup = (RadioGroup) rootView.findViewById(R.id.PracticeRadioGroup);
 
-        mTextView = (TextView) rootview.findViewById(R.id.chosenLetter);
-        mImageView = (ImageView) rootview.findViewById(R.id.letterPreviewImage);
-        OptionA = (RadioButton) rootview.findViewById(R.id.optionA);
-        OptionB = (RadioButton) rootview.findViewById(R.id.optionB);
-        OptionC = (RadioButton) rootview.findViewById(R.id.optionC);
-        OptionD = (RadioButton) rootview.findViewById(R.id.optionD);
-        mButton = (Button) rootview.findViewById(R.id.finishPracticeButton);
+        mTextView = (TextView) rootView.findViewById(R.id.chosenLetter);
+        mImageView = (ImageView) rootView.findViewById(R.id.letterPreviewImage);
+        OptionA = (RadioButton) rootView.findViewById(R.id.optionA);
+        OptionB = (RadioButton) rootView.findViewById(R.id.optionB);
+        OptionC = (RadioButton) rootView.findViewById(R.id.optionC);
+        OptionD = (RadioButton) rootView.findViewById(R.id.optionD);
+        mButton = (Button) rootView.findViewById(R.id.finishPracticeButton);
 
         Question CurrentQuestion = GM.getQuestion(GM.getCurrentExercise());
         mTextView.setText("Letra: " + GM.getLetter());
@@ -87,8 +87,8 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
     }
 
     private void HideAppBarLayout(){
-        AppBarLayout v = (AppBarLayout) getActivity().findViewById(R.id.test);
-        v.setExpanded(false, true);
+        AppBarLayout APL = (AppBarLayout) getActivity().findViewById(R.id.test);
+        APL.setExpanded(false, true);
     }
 
     private void initGestures(View rootView){
@@ -114,8 +114,8 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
                         if(e1!=null && e2!=null) {
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 Log.i(TAG, "Right to Left");
-
-                                GM.SaveAnswer(CurrentAnswer);
+                                if(validInput())
+                                    GM.SaveAnswer(CurrentAnswer);
                             }
                         }
                         return super.onFling(e1, e2, velocityX, velocityY);
@@ -134,8 +134,8 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
     public boolean validInput(){
 
         int CheckedId = mRadioGroup.getCheckedRadioButtonId();
-        final int A = OptionA.getId();
-        final int B = OptionB.getId();
+        int A = OptionA.getId();
+        int B = OptionB.getId();
         int C = OptionC.getId();
         int D = OptionD.getId();
 
@@ -155,18 +155,16 @@ public class LetterPracticeFragment extends Fragment implements Init,View.OnClic
             return true;
         }
 
-
         return false;
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
         switch (id){
             case R.id.finishPracticeButton:
-
-                Log.d(TAG,"Student chose an answer");
                 if(validInput()) {
+                    Log.d(TAG,"Student has chosen an answer");
                     GM.SaveAnswer(CurrentAnswer);
                 }
 

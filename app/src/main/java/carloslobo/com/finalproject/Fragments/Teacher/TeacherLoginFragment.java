@@ -24,22 +24,21 @@ public class TeacherLoginFragment extends Fragment implements Init,View.OnClickL
 
     private final static String TAG = TeacherLoginFragment.class.getName();
 
+    //Layout
     TextInputLayout mUser, mPassword;
     Button mButton;
 
-    public TeacherLoginFragment() {
-        // Required empty public constructor
-    }
+    public TeacherLoginFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootview = inflater.inflate(R.layout.fragment_teacher_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_teacher_login, container, false);
 
-        initViews(rootview);
+        initViews(rootView);
         initListeners();
 
-        return rootview;
+        return rootView;
     }
 
     @Override
@@ -72,8 +71,8 @@ public class TeacherLoginFragment extends Fragment implements Init,View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
 
         switch (id){
             case R.id.teacherLoginButton:
@@ -86,6 +85,7 @@ public class TeacherLoginFragment extends Fragment implements Init,View.OnClickL
         }
     }
 
+    //I should do an internal class
     private void LogInAttempt(){
         //String userName = mUser.getEditText().getText().toString();
         //String password = mPassword.getEditText().getText().toString();
@@ -118,31 +118,30 @@ public class TeacherLoginFragment extends Fragment implements Init,View.OnClickL
 
     public void Success(){
         Log.d(TAG,"Teacher identified");
-        Toast.makeText(getActivity(), "Inicio de sesión exitoso", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
         Transaction();
     }
 
     public void Mismatch(){
         Log.d(TAG, "User identified but not a teacher.");
-        Toast.makeText(getActivity(), "El usuario ingresado no es un profesor.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "El usuario ingresado no es un profesor.", Toast.LENGTH_SHORT).show();
     }
 
     public void Failure(){
         Log.d(TAG,"Teacher not found.");
-        Toast.makeText(getActivity(), "El usuario no pudo ser encontrado.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "El usuario no pudo ser encontrado.", Toast.LENGTH_SHORT).show();
     }
 
     public void Unknown(){
         Log.d(TAG,"Something weird happened.");
-        Toast.makeText(getActivity(),"Hubo un error inesperado",Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(),"Hubo un error inesperado",Toast.LENGTH_SHORT).show();
     }
 
     private void Transaction(){
         FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        mTransaction.setCustomAnimations(R.anim.fadeout, R.anim.fadein, R.anim.fadeout, R.anim.fadein);
         mTransaction.replace(R.id.main_container, new TeacherMenuFragment(), "TeacherMenu");
         mTransaction.addToBackStack("TeacherMenu");
-
         mTransaction.commit();
     }
 }

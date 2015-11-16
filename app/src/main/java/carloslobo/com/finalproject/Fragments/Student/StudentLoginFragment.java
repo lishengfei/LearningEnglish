@@ -84,7 +84,7 @@ public class StudentLoginFragment extends Fragment implements Init, View.OnClick
 
     private void LogInAttempt(){
         //String userName = mUser.getEditText().getText().toString();
-        String userName = "camilo";
+        String userName = "camilo3";
         String password = userName;
 
         ParseUser.logInInBackground(userName,password, new LogInCallback() {
@@ -132,7 +132,7 @@ public class StudentLoginFragment extends Fragment implements Init, View.OnClick
 
     private void Transaction(){
         FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        mTransaction.setCustomAnimations(R.anim.fadeout, R.anim.fadein, R.anim.fadeout, R.anim.fadein);
         mTransaction.replace(R.id.main_container, new StudentLetterMenuFragment(), "StudentMenu");
         mTransaction.addToBackStack("StudentMenu");
         mTransaction.commit();

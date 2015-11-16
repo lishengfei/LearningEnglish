@@ -22,10 +22,10 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-import carloslobo.com.finalproject.Modules.ClassLetter;
+import carloslobo.com.finalproject.Modules.Letter;
 import carloslobo.com.finalproject.Modules.Demo.RecyclerClickListener;
 import carloslobo.com.finalproject.Modules.Adapters.LettersViewAdapter;
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.Modules.Interfaces.Communicator;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
 import carloslobo.com.finalproject.R;
@@ -35,13 +35,15 @@ public class LettersFragment extends Fragment implements Init, RecyclerClickList
 
     private final String TAG = LettersFragment.class.getName();
 
+    //Layout
     private LettersViewAdapter mViewAdapter;
     private RecyclerView mRecyclerView;
-    private List<ClassLetter> mData = new ArrayList<>();
+    private List<Letter> mData = new ArrayList<>();
 
-    private ParseObject CurrentGroup;
+    //Data Structures
+    private String CurrentGroup;
+    private String SelectedLetter;
     JSONArray ReleasedLetters;
-
     private String GroupName;
 
     public LettersFragment() {  }
@@ -83,31 +85,33 @@ public class LettersFragment extends Fragment implements Init, RecyclerClickList
 
     @Override
     public void itemClick(View view, int position) {
-        Log.d(TAG,"A letter was clicked.");
-        onFordward(mData.get(position).getLetter());
+        Letter L = mData.get(position);
 
+        SelectedLetter = L.getLetterId();
+        Send(SelectedLetter);
+
+        Log.d(TAG, "The teacher will release a letter");
     }
 
     @Override
-    public void onFordward(String Letter) {
+    public void Send(String Letter) {
 
         Bundle args = new Bundle();
-        args.putString("objId", CurrentGroup.getObjectId());
-        args.putString("Letter",Letter);
+        args.putString("GroupId", CurrentGroup);
+        args.putString("LetterId",Letter);
 
-        ReleaseLetterDialog dialogFragment = new ReleaseLetterDialog();
+        ReleaseLetterDialog Popup = new ReleaseLetterDialog();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            dialogFragment.setArguments(args);
-            dialogFragment.show(getActivity().getFragmentManager(), "Dialog Fragment");
+            Popup.setArguments(args);
+            Popup.show(getActivity().getFragmentManager(), "Dialog Fragment");
         }
 
     }
 
-    private class GetData extends AsyncTask<Void,Void,Void> implements Async {
+    private class GetData extends AsyncTask<Void,Void,Void> implements AsyncResponse {
 
         ProgressDialog pDialog;
-
 
         @Override
         protected void onPreExecute() {
@@ -141,36 +145,34 @@ public class LettersFragment extends Fragment implements Init, RecyclerClickList
 
         @Override
         public void Query() throws ParseException {
-            ParseQuery<ParseObject> mParseQuery = new ParseQuery<>("Group");
-            mParseQuery.whereEqualTo("Teacher", ParseUser.getCurrentUser());
-            mParseQuery.whereEqualTo("GroupName", GroupName);
-            mParseQuery.whereEqualTo("Open", true);
-            List<ParseObject> JSON_List = mParseQuery.find();
+            ParseQuery<ParseObject> GroupQuery = new ParseQuery<>("Group");
+            GroupQuery.whereEqualTo("Teacher", ParseUser.getCurrentUser());
+            GroupQuery.whereEqualTo("GroupName", GroupName);
+            GroupQuery.whereEqualTo("Open", true);
+            List<ParseObject> Group_List = GroupQuery.find();
 
-            ParseQuery<ParseObject> mParseQuery2 = new ParseQuery<>("Letter");
-            List<ParseObject> JSON_List2 = mParseQuery2.find();
+            ParseQuery<ParseObject> LettersQuery = new ParseQuery<>("Letter");
+            List<ParseObject> Letters_List = LettersQuery.find();
 
-            if(JSON_List == null){
-                Log.d(TAG,"The selected group coudln't be found for some reason.");
-                Finalize(false);
-            }
+            if(Group_List == null){
+                Finalize(false);}
             else {
+                ParseObject GroupJSON = Group_List.get(0);
+                CurrentGroup = GroupJSON.getObjectId();
+                ReleasedLetters = GroupJSON.getJSONArray("ReleasedLetters");
 
-                CurrentGroup = JSON_List.get(0);
-                ReleasedLetters = CurrentGroup.getJSONArray("ReleasedLetters");
-
-                for (ParseObject JSON:JSON_List2){
+                for (ParseObject JSON:Letters_List){
                     ProcessQuery(JSON);
                 }
 
-                Finalize(true);
-            }
+                Finalize(true);}
         }
 
         @Override
-        public void ProcessQuery(ParseObject JSON) {
-            String letter = JSON.get("Letter").toString();
+        public void ProcessQuery(ParseObject JSON) throws ParseException {
+
             String objId = JSON.getObjectId();
+            String letter = JSON.getString("Letter");
             boolean locked = false;
 
             if(ReleasedLetters!=null) {
@@ -178,9 +180,13 @@ public class LettersFragment extends Fragment implements Init, RecyclerClickList
                     locked = true;
             }
 
-            ClassLetter i = new ClassLetter(letter, 0, locked);
+            //I should fix this part, a double request per question seems bad.
+            ParseQuery<ParseObject> GradesQuery = new ParseQuery<>("Grades");
+            GradesQuery.whereEqualTo("Letter", JSON);
+            GradesQuery.whereEqualTo("Group", ParseObject.createWithoutData("Group",CurrentGroup) );
+            List<ParseObject> GradesJSON = GradesQuery.find();
 
-            mData.add(i);
+            mData.add( new Letter(objId, letter, GradesJSON.size(), locked) );
 
             Log.d(TAG, "A JSON object was processed");
         }
@@ -190,12 +196,10 @@ public class LettersFragment extends Fragment implements Init, RecyclerClickList
             pDialog.dismiss();
 
             if(Success)
-                Log.d(TAG,"Groups were loaded successfully");
+                Log.d(TAG,"Letters were loaded successfully");
             else
-                Log.d(TAG,"Groups loading was unsuccessful");
+                Log.d(TAG,"The group's letters could not be loaded.");
         }
-
-
 
     }
 }

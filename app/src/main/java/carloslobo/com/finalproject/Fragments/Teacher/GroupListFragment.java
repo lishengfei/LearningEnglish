@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -26,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import carloslobo.com.finalproject.Modules.Adapters.GroupViewAdapter;
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.Modules.Interfaces.Communicator;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
 import carloslobo.com.finalproject.Modules.Demo.RecyclerClickListener;
@@ -39,10 +38,12 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
 
     private final static String TAG = GroupListFragment.class.getName();
 
+    //Layout
     private FloatingActionButton mButton;
     private GroupViewAdapter mViewAdapter;
     private RecyclerView mRecyclerView;
 
+    //Data Structures
     HashMap<String,String> mData = new HashMap();
 
     public GroupListFragment() {    }
@@ -65,7 +66,6 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
         mButton = (FloatingActionButton) rootView.findViewById(R.id.addNewGroupButton);
         mViewAdapter = new GroupViewAdapter(getActivity(), mData);
         initRecyclerView(rootView);
-
     }
 
     @Override
@@ -82,47 +82,52 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
 
     @Override
     public void itemClick(View view, int position) {
+        String Key = mData.keySet().toArray()[position].toString(); //GroupName
+        String Value = mData.get(Key);//Number of Students
 
-        String Key = mData.keySet().toArray()[position].toString(); //Curso Name
-        String Value = mData.get(Key);//Estds.
+        Send(Key);
 
-        Log.d(TAG, Key+", "+Value);
-        Toast.makeText(getActivity(),Key+", "+Value,Toast.LENGTH_SHORT).show();
-
-        onFordward(Key);
+        Log.d(TAG, "The teacher wants to see the letters of a group.");
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void Send(String GroupName) {
+        Bundle args = new Bundle();
+        args.putString("GroupName", GroupName);
+        Transaction("GroupLetters",args);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
         switch (id){
             case R.id.addNewGroupButton:
-
-                FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                mTransaction.replace(R.id.main_container, new NewGroupFragment(),"NewGroup");
-                mTransaction.addToBackStack(null);
-                mTransaction.commit();
-
+                Transaction("NewGroup",null);
                 Log.d(TAG, "A new group will be created");
             break;
         }
     }
 
-    @Override
-    public void onFordward(String GroupName) {
-        Bundle args = new Bundle();
-        args.putString("GroupName", GroupName);
-
+    private void Transaction(String FRAGMENT_TYPE, Bundle args){
         FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-        Fragment Target = new  LettersFragment();
-        Target.setArguments(args);
+        Fragment TARGET = null;
 
-        mTransaction.replace(R.id.main_container, Target).addToBackStack("GroupLetters");
+        if(FRAGMENT_TYPE.equals("NewGroup")){
+            TARGET = new NewGroupFragment();
+        }
+        else if(FRAGMENT_TYPE.equals("GroupLetters")){
+            TARGET = new  LettersFragment();
+            TARGET.setArguments(args);
+        }
+
+        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        mTransaction.replace(R.id.main_container, TARGET, FRAGMENT_TYPE);
+        mTransaction.addToBackStack(null);
         mTransaction.commit();
     }
 
-    private class GetData extends AsyncTask<Void,Void,Void> implements Async {
+    private class GetData extends AsyncTask<Void,Void,Void> implements AsyncResponse {
         ProgressDialog pDialog;
 
         @Override
@@ -150,7 +155,7 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
         @Override
         public void Setup() {
             pDialog = new ProgressDialog(getActivity());
-            pDialog.setTitle("Loading from groups");
+            pDialog.setTitle("Loading groups");
             pDialog.setMessage("This may take a while");
             pDialog.setIndeterminate(false);
             pDialog.show();
@@ -162,12 +167,9 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
             mParseQuery.whereEqualTo("Teacher", ParseUser.getCurrentUser());
             mParseQuery.whereEqualTo("Open", true);
 
-
-
             List<ParseObject> JSON_List = mParseQuery.find();
 
             if(JSON_List == null){
-                Log.d(TAG,"No groups found.");
                 Finalize(false);
             }
             else {
@@ -182,10 +184,10 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
 
         @Override
         public void ProcessQuery(ParseObject JSON) {
-            String GroupName = JSON.get("GroupName").toString();
+            String GroupName = JSON.getString("GroupName");
 
             JSONArray Students = JSON.getJSONArray("Students");
-            int nStudents = (Students==null)? 0:Students.length();
+            int nStudents = (Students==null)? 0 : Students.length();
 
             mData.put(GroupName, nStudents + "");
 
@@ -196,13 +198,11 @@ public class GroupListFragment extends Fragment implements Init, RecyclerClickLi
         public void Finalize(boolean Success) {
             pDialog.dismiss();
 
-            if(!Success) {
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity(), "No se encontraron grupos.", Toast.LENGTH_SHORT).show();;
-                    }
-                });
-            }
+            if(Success)
+                Log.d(TAG,"The teacher's groups were processed.");
+            else
+                Log.d(TAG,"No groups were found.");
+
         }
 
 

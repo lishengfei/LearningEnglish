@@ -17,7 +17,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
 import carloslobo.com.finalproject.R;
 
@@ -29,23 +29,24 @@ public class NewGroupFragment extends Fragment implements Init, View.OnClickList
 
     private final static String TAG = NewGroupFragment.class.getName();
 
+    //Layout
     TextInputLayout mGroup;
-    String Group;
-
     Button mButton;
 
-    public NewGroupFragment() {
+    //Variables
+    String Group;
 
-    }
+
+    public NewGroupFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.fragment_new_group, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_new_group, container, false);
 
-        initViews(rootview);
+        initViews(rootView);
         initListeners();
 
-        return rootview;
+        return rootView;
     }
 
 
@@ -64,8 +65,7 @@ public class NewGroupFragment extends Fragment implements Init, View.OnClickList
         Group = mGroup.getEditText().getText().toString();
 
         if (Group.isEmpty()) {
-            if (Group.isEmpty())
-                mGroup.setError("El campo de nombre esta vacío");
+            mGroup.setError("El campo de nombre esta vacío");
             return false;
         }
 
@@ -74,24 +74,22 @@ public class NewGroupFragment extends Fragment implements Init, View.OnClickList
 
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
 
         switch (id){
             case R.id.newGroupButton:
 
                 if(validateInput()) {
-                    Log.d(TAG,"Creating new group");
                     new SendData().execute();
-                }
-
+                    Log.d(TAG,"Creating new group");}
                 break;
         }
 
     }
 
 
-    private class SendData extends AsyncTask<Void,Void,Void> implements Async {
+    private class SendData extends AsyncTask<Void,Void,Void> implements AsyncResponse {
 
         ProgressDialog pDialog;
 
@@ -103,29 +101,7 @@ public class NewGroupFragment extends Fragment implements Init, View.OnClickList
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            try {   Query();    }
-            catch (ParseException e) {  e.printStackTrace();    }
 
-            return null;
-        }
-
-        @Override
-        public void Setup() {
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setTitle("Creating new Entry");
-            pDialog.setMessage("This will take a moment.");
-            pDialog.setIndeterminate(false);
-            pDialog.show();
-        }
-
-        @Override
-        public void Query() throws ParseException {
-            ProcessQuery(null);
-            Finalize(true);
-        }
-
-        @Override
-        public void ProcessQuery(ParseObject JSON) {
             ParseObject mParcel = new ParseObject("Group");
             mParcel.put("GroupName",Group);
             mParcel.put("Teacher", ParseUser.getCurrentUser());
@@ -133,23 +109,36 @@ public class NewGroupFragment extends Fragment implements Init, View.OnClickList
             mParcel.saveInBackground();
 
             Log.d(TAG,"Parcel was sent to Parse");
+
+            Finalize(true);
+
+            return null;
+        }
+
+        @Override
+        public void Setup() {
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setTitle("Creating new group");
+            pDialog.setMessage("This will take a moment.");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
+
+        @Override
+        public void Query() throws ParseException {
+            return;
+        }
+
+        @Override
+        public void ProcessQuery(ParseObject JSON) {
+            return;
         }
 
         @Override
         public void Finalize(boolean Success) {
             pDialog.dismiss();
 
-            if(!Success){
-                Log.d(TAG, "Could not create a new group");
-
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity(), "Could not create a new group", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-            else {
+            if(Success) {
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
                         Toast.makeText(getActivity(), Group + " was created", Toast.LENGTH_SHORT).show();

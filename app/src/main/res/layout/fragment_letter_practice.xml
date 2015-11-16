@@ -12,21 +12,20 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_alignBottom="@+id/letterPreviewImage"
         android:id="@+id/relativeLayout">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Letra"
+            android:text="@string/Letter"
             android:id="@+id/chosenLetter"
             android:layout_marginTop="25dp"
             android:fontFamily="sans-serif-bold"
             android:textColor="@color/colorPrimaryDark"
 
             android:textStyle="bold"
-            android:textSize="35dp"
+            android:textSize="35sp"
             android:layout_alignParentTop="true"
             android:layout_alignLeft="@+id/letterPreviewImage"
             android:layout_alignStart="@+id/letterPreviewImage" />
@@ -42,7 +41,8 @@
             android:layout_marginTop="70dp"
             android:layout_marginRight="50dp"
             android:src="@drawable/placeholder"
-            android:background="@drawable/img_border"/>
+            android:background="@drawable/img_border"
+            android:contentDescription="@string/PracticeImage" />
     </RelativeLayout>
 
     <LinearLayout
@@ -50,26 +50,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical|center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/relativeLayout"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp">
 
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/finishPracticeButton"
-            android:layout_alignLeft="@+id/letterPreviewImage"
-            android:layout_alignStart="@+id/letterPreviewImage"
-            android:layout_alignRight="@+id/letterPreviewImage"
-            android:layout_alignEnd="@+id/letterPreviewImage"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentStart="false"
             android:orientation="vertical"
             android:gravity="center_vertical|center_horizontal"
-            android:layout_below="@+id/letterPreviewImage"
             android:id="@+id/PracticeRadioGroup"
             android:layout_marginBottom="25dp">
 
@@ -77,11 +65,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Option A"
+                android:text="@string/A"
                 android:id="@+id/optionA"
-                android:layout_alignTop="@+id/optionB"
-                android:layout_toLeftOf="@+id/optionD"
-                android:layout_toStartOf="@+id/optionD"
                 android:fontFamily="sans-serif-light"
                 android:checked="false" />
 
@@ -89,46 +74,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Option D"
-                android:id="@+id/optionD"
-                android:layout_above="@+id/optionA"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"
-                android:checked="false" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Option C"
-                android:id="@+id/optionC"
-                android:layout_below="@+id/optionA"
-                android:layout_toRightOf="@+id/optionA"
-                android:layout_toEndOf="@+id/optionA"
-                android:layout_gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Option B"
+                android:text="@string/B"
                 android:id="@+id/optionB"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/optionC"
-                android:layout_toEndOf="@+id/optionC"
                 android:fontFamily="sans-serif-light"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/C"
+                android:id="@+id/optionC"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-light"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/D"
+                android:id="@+id/optionD"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-light"
+                android:checked="false" />
 
         </RadioGroup>
 
         <Button
             android:layout_width="181dp"
             android:layout_height="wrap_content"
-            android:text="Guardar"
+            android:text="@string/Save"
             android:id="@+id/finishPracticeButton"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:background="@drawable/button_primary"
             android:textStyle="bold"
             android:fontFamily="sans-serif-light"

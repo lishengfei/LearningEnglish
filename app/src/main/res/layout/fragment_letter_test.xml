@@ -17,38 +17,31 @@
             android:layout_height="230dp"
             android:id="@+id/testImage"
             android:src="@drawable/placeholder"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="30dp" />
+            android:layout_margin="30dp"
+            android:background="@drawable/img_border"
+            android:contentDescription="@string/TestImage" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/studentAnswer"
             android:layout_width="275dp"
-            android:layout_height="71dp"
-            android:layout_below="@+id/testImage"
-            android:layout_alignLeft="@+id/testImage"
-            android:layout_alignStart="@+id/testImage"
-            android:layout_alignRight="@+id/testImage"
-            android:layout_alignEnd="@+id/testImage">
+            android:layout_height="71dp">
 
             <EditText
                 android:id="@+id/studentAnswer_Content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingresa tu respuesta aquí"
+                android:hint="@string/StudentAnswer"
                 android:inputType="text"
                 android:gravity="center_vertical|center_horizontal"
-                android:fontFamily="sans-serif-light"/>
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/textColorPrimary" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
             android:layout_width="164dp"
             android:layout_height="wrap_content"
-            android:text="Guardar"
+            android:text="@string/Save"
             android:id="@+id/saveTestButton"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="79dp"
             android:background="@drawable/button_primary"
             android:textStyle="bold"

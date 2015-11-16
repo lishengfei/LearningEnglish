@@ -13,15 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
-import java.util.List;
-
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncRequest;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
 import carloslobo.com.finalproject.R;
 
@@ -31,8 +28,11 @@ public class ReleaseLetterDialog extends DialogFragment implements Init,View.OnC
 
     private final String TAG = ReleaseLetterDialog.class.getName();
 
+    //Layout
     private Button Cancel,Ok;
-    private String targetObjectId, letterName, targetLetterId;
+
+    //Variables
+    private String TARGET_GROUP, TARGET_LETTER;
 
     public ReleaseLetterDialog() {  }
 
@@ -47,8 +47,8 @@ public class ReleaseLetterDialog extends DialogFragment implements Init,View.OnC
 
         View rootView = inflater.inflate(R.layout.fragment_release_letter, container, false);
 
-        targetObjectId = getArguments().getString("objId");
-        letterName = getArguments().getString("Letter");
+        TARGET_GROUP = getArguments().getString("GroupId");
+        TARGET_LETTER = getArguments().getString("LetterId");
 
         initViews(rootView);
         initListeners();
@@ -60,31 +60,24 @@ public class ReleaseLetterDialog extends DialogFragment implements Init,View.OnC
         return rootView;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
 
         switch (id){
             case R.id.OK_button:
                 new SendData().execute();
-                this.dismiss();
-                break;
-
-            default:
-                this.dismiss();
                 break;
         }
+
+        this.dismiss();
     }
 
     @Override
-    public void initViews(View rootview) {
-        Ok = (Button) rootview.findViewById(R.id.OK_button);
-        Cancel = (Button) rootview.findViewById(R.id.CANCEL_button);
+    public void initViews(View rootView) {
+        Ok = (Button) rootView.findViewById(R.id.OK_button);
+        Cancel = (Button) rootView.findViewById(R.id.CANCEL_button);
     }
 
     @Override
@@ -94,7 +87,7 @@ public class ReleaseLetterDialog extends DialogFragment implements Init,View.OnC
     }
 
 
-    private class SendData extends AsyncTask<Void,Void,Void> implements Async {
+    private class SendData extends AsyncTask<Void,Void,Void> implements AsyncRequest {
 
         ProgressDialog pDialog;
 
@@ -106,9 +99,7 @@ public class ReleaseLetterDialog extends DialogFragment implements Init,View.OnC
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            try {   Query();    }
-            catch (ParseException e) {  e.printStackTrace();    }
-
+            MakeRequest();
             return null;
         }
 
@@ -121,43 +112,28 @@ public class ReleaseLetterDialog extends DialogFragment implements Init,View.OnC
             pDialog.show();
         }
 
-        public void Query() throws ParseException {
+        @Override
+        public void MakeRequest() {
+            ParseObject UpdateGroup = ParseObject.createWithoutData("Group",TARGET_GROUP);
+            UpdateGroup.addUnique("ReleasedLetters", TARGET_LETTER);
 
-            ParseQuery<ParseObject> mParseQuery = ParseQuery.getQuery("Group");
-            mParseQuery.whereEqualTo("objectId", targetObjectId);
-            List<ParseObject> JSON = mParseQuery.find();
+            try {   UpdateGroup.save(); }
+            catch (ParseException e) {  e.printStackTrace();    }
 
-            ParseQuery<ParseObject> mParseQuery2 = ParseQuery.getQuery("Letter");
-            mParseQuery2.whereEqualTo("Letter",letterName);
-            List<ParseObject> JSON2 = mParseQuery2.find();
-
-            if(JSON==null||JSON2==null){
-                Finalize(false);}
-            else{
-                targetLetterId = JSON2.get(0).getObjectId();
-                ProcessQuery(JSON.get(0));
-                Finalize(true);
-            }
-
+            Finalize(true);
         }
 
         @Override
-        public void ProcessQuery(ParseObject JSON) {
-            JSON.addUnique("ReleasedLetters", targetLetterId);
-            JSON.saveInBackground();
-            Log.d(TAG, "Parcel was sent to Parse");
-        }
-
-        @Override
-        public void Finalize(boolean success) {
+        public void Finalize(boolean Success) {
             pDialog.dismiss();
 
-            if (success){
-                Log.d(TAG,"Letter was released");
-            }else {
-                Log.d(TAG,"Letter could not be released");
-            }
+            if (Success)
+                Log.d(TAG,"The letter was released");
+            else
+                Log.d(TAG,"The letter could not be released");
+
         }
+
 
 
     }

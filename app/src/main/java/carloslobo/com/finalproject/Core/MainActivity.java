@@ -2,8 +2,6 @@ package carloslobo.com.finalproject.Core;
 
 
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -11,31 +9,18 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import com.parse.ParseObject;
-
-import junit.framework.Test;
-
-import java.util.ArrayList;
-
+import carloslobo.com.finalproject.Fragments.About;
 import carloslobo.com.finalproject.Fragments.Student.LetterIntroductionFragment;
 import carloslobo.com.finalproject.Fragments.Student.LetterPracticeFragment;
 import carloslobo.com.finalproject.Fragments.Student.LetterTestFragment;
 import carloslobo.com.finalproject.Fragments.Student.StudentLetterMenuFragment;
-import carloslobo.com.finalproject.Fragments.Student.StudentLoginFragment;
-import carloslobo.com.finalproject.Fragments.Teacher.GroupListFragment;
-import carloslobo.com.finalproject.Fragments.Teacher.TeacherLoginFragment;
 import carloslobo.com.finalproject.Fragments.Teacher.TeacherMenuFragment;
 import carloslobo.com.finalproject.Fragments.WelcomeFragment;
 import carloslobo.com.finalproject.Modules.GameManager;
@@ -49,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GameManager gManager;
     private String CurrentTeacher;
 
-    public GameManager getgManager() {
+    public GameManager getGManager() {
         return gManager;
     }
 
@@ -79,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.main_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         if(savedInstanceState==null){
             FragmentTransaction mTransaction = mManager.beginTransaction();
@@ -122,9 +105,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         StudentLetterMenuFragment StudentLogin = (StudentLetterMenuFragment) mManager.findFragmentByTag("StudentMenu");
 
         if (  (TeacherLogin != null && TeacherLogin.isVisible()) ||  (StudentLogin != null && StudentLogin.isVisible())  ) {
-            AppBarLayout v = (AppBarLayout) this.findViewById(R.id.test);
-            v.setExpanded(true, false);
-            ((ImageView) this.findViewById(R.id.collapsable_image)).setImageDrawable(null);
+            AppBarLayout APL = (AppBarLayout) this.findViewById(R.id.test);
+            APL.setExpanded(false, true);
+
         }
     }
 
@@ -191,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main2, menu);
         return true;
     }
 
@@ -203,10 +185,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -216,20 +194,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
+        if (id == R.id.InstProfesores) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.InstEstudiantes) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.About) {
+            FragmentTransaction mTransaction = mManager.beginTransaction();
+            mTransaction.setCustomAnimations(R.anim.fadeout, R.anim.fadein,R.anim.fadeout,R.anim.fadein);
+            mTransaction.replace(R.id.main_container,new About(), "About");
+            mTransaction.addToBackStack("About");
+            mTransaction.commit();
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.Close) {
+            finish();
+            System.exit(0);
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -7,26 +7,24 @@
     <LinearLayout  android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="carloslobo.com.finalproject.Fragments.Student.LetterIntroductionFragment"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="25dp">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:id="@+id/letterPreviewImage"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:layout_margin="20dp"
             android:src="@drawable/placeholder"
-            android:background="@drawable/img_border"/>
+            android:background="@drawable/img_border"
+            android:contentDescription="@string/IntroductionImage" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Sample Text"
+            android:text="@string/Word"
             android:id="@+id/WordExample"
-            android:layout_below="@+id/letterPreviewImage"
-            android:layout_centerHorizontal="true"
             android:fontFamily="sans-serif-light"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/colorPrimaryDark"
@@ -35,10 +33,8 @@
         <Button
             android:layout_width="137dp"
             android:layout_height="wrap_content"
-            android:text="OK!"
+            android:text="@string/OK"
             android:id="@+id/letterIntroductionButton"
-            android:layout_below="@+id/WordExample"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="67dp"
             android:fontFamily="sans-serif-light"
             android:textStyle="bold"

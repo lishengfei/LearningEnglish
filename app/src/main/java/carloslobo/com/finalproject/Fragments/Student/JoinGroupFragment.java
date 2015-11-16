@@ -21,7 +21,7 @@ import com.parse.ParseUser;
 
 import java.util.List;
 
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
 import carloslobo.com.finalproject.R;
 
@@ -33,14 +33,12 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
 
     public final static String TAG = JoinGroupFragment.class.getName();
 
+    //Layout
     private TextInputLayout mGroup;
     private String Group;
-
     private Button mButton;
 
-    public JoinGroupFragment() {
-
-    }
+    public JoinGroupFragment() {    }
 
 
     @Override
@@ -57,9 +55,9 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
 
 
     @Override
-    public void initViews(View rootview) {
-        mButton = (Button) rootview.findViewById(R.id.joinGroupButton);
-        mGroup = (TextInputLayout) rootview.findViewById(R.id.GroupName);
+    public void initViews(View rootView) {
+        mButton = (Button) rootView.findViewById(R.id.joinGroupButton);
+        mGroup = (TextInputLayout) rootView.findViewById(R.id.GroupName);
     }
 
     @Override
@@ -81,8 +79,8 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
     }
 
     private void HideAppBarLayout(){
-        AppBarLayout v = (AppBarLayout) getActivity().findViewById(R.id.test);
-        v.setExpanded(false, true);
+        AppBarLayout APL = (AppBarLayout) getActivity().findViewById(R.id.test);
+        APL.setExpanded(false, true);
     }
 
     @Override
@@ -98,7 +96,7 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
     }
 
 
-    private class SendData extends AsyncTask<Void,Void,Void> implements Async {
+    private class SendData extends AsyncTask<Void,Void,Void> implements AsyncResponse {
 
         ProgressDialog pDialog;
 
@@ -126,25 +124,25 @@ public class JoinGroupFragment extends Fragment implements Init,View.OnClickList
         }
 
         public void Query() throws ParseException {
-
             ParseQuery<ParseObject> mParseQuery = ParseQuery.getQuery("Group");
             mParseQuery.whereEqualTo("GroupName", Group);
 
             List<ParseObject> JSON = mParseQuery.find();
 
-            if(JSON==null){
+            if(JSON==null||JSON.size()==0){
                 Finalize(false);}
             else{
                 Log.d(TAG, "A group was found");
                 ProcessQuery(JSON.get(0));
                 Finalize(true);
             }
+
         }
 
         @Override
-        public void ProcessQuery(ParseObject JSON) {
+        public void ProcessQuery(ParseObject JSON) throws ParseException {
             JSON.addUnique("Students", ParseUser.getCurrentUser());
-            JSON.saveInBackground();
+            JSON.save();
             Log.d(TAG, "Parcel was sent to Parse");
         }
 

@@ -25,7 +25,8 @@ import carloslobo.com.finalproject.Core.MainActivity;
 import carloslobo.com.finalproject.Fragments.Student.LetterIntroductionFragment;
 import carloslobo.com.finalproject.Fragments.Student.LetterPracticeFragment;
 import carloslobo.com.finalproject.Fragments.Student.LetterTestFragment;
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncRequest;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.R;
 
 /**
@@ -46,9 +47,8 @@ public class GameManager {
     private int CurrentExercise = 1;
 
     //To retreive info from Parse
-    private ParseObject WorkingLetter;
-    private String LETTER;
-    private ParseObject WorkingGroup;
+    private ParseObject GAME_LETTER;
+    private String LetterId;
     private ArrayList<Question> QuestionsSet = new ArrayList();
 
     //Exams Params
@@ -67,11 +67,7 @@ public class GameManager {
     }
 
     public String getLetter(){
-        return LETTER;
-    }
-
-    public int getExercisesNumber() {
-        return nExercises;
+        return LetterId;
     }
 
     public int getCurrentExercise() {
@@ -86,28 +82,11 @@ public class GameManager {
         this.CurrentExercise +=1;
     }
 
-    private ParseObject NewParseObject(String TableName, String Id) throws ParseException {
-        ParseObject mObject = ParseObject.createWithoutData(TableName, Id);
-        return mObject;
+    public void setGameLetter(String Id) throws ParseException {
+        GAME_LETTER = ParseObject.createWithoutData("Letter", Id);
     }
 
-    public void setWorkingGroup(String Id) throws ParseException {
-        WorkingGroup = NewParseObject("Group",Id);
-    }
-
-    public void setWorkingLetter(String Id) throws ParseException {
-        WorkingLetter = NewParseObject("Letter",Id);
-    }
-
-    public ParseObject getWorkingLetter() {
-        return WorkingLetter;
-    }
-
-    public ParseObject getWorkingGroup() {
-        return WorkingGroup;
-    }
-
-    public void StartMode(String Mode){
+    public void Setup(String Mode){
 
         int i = mContext.getFragmentCount();
         MODULE = Mode;
@@ -121,13 +100,13 @@ public class GameManager {
     }
 
 
-    public void ModeReady() {
+    public void Start() {
         Collections.shuffle(QuestionsSet);
 
         Log.d(TAG, "Shuffled Questions");
 
         FragmentTransaction mTransaction = mContext.getSupportFragmentManager().beginTransaction();
-
+        mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         if(MODULE.equals("Introduction"))
             mTransaction.replace(R.id.main_container, new LetterIntroductionFragment(), TARGET_TAG);
 
@@ -153,13 +132,18 @@ public class GameManager {
 
     public void Finish(){
 
-        Score = (float) ((nOK * 100.0) / (nOK + nWrong));
-        Progress.put("Score",Score);
-        Progress.put("Letter",WorkingLetter);
-        Progress.put("Teacher", ParseObject.createWithoutData("_User", mContext.getCurrentTeacher()));
-        Progress.put("Module", MODULE);
+        if(!MODULE.equals("Introduction")){
+            Score = (float) ((nOK * 100.0) / (nOK + nWrong));
+            Progress.put("Score",Score);
+            Progress.put("Letter", GAME_LETTER);
+            Progress.put("Teacher", ParseObject.createWithoutData("_User", mContext.getCurrentTeacher()));
+            Progress.put("Module", MODULE);
 
-        new SaveProgress().execute();
+            new SaveProgress().execute();
+        }else {
+            Terminate();
+            mContext.onBackPressed();
+        }
 
     }
 
@@ -169,7 +153,8 @@ public class GameManager {
             this.Finish();}
         else
             {
-                this.UpdateProgress(Input);
+                if(!MODULE.equals("Introduction"))
+                    this.UpdateProgress(Input);
                 this.FetchNewQuestion();
             }
     }
@@ -230,7 +215,7 @@ public class GameManager {
         mContext.addFragmentCount();
     }
 
-    private class GetQuestions extends AsyncTask<Void,Void,Void> implements Async {
+    private class GetQuestions extends AsyncTask<Void,Void,Void> implements AsyncResponse {
         ProgressDialog pDialog;
 
         @Override
@@ -252,7 +237,7 @@ public class GameManager {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            ModeReady();
+            Start();
         }
 
         @Override
@@ -268,18 +253,18 @@ public class GameManager {
         public void Query() throws ParseException {
             //Get all the questions with the letter the user has choosen
             ParseQuery<ParseObject> QUESTIONS_QUERY = new ParseQuery<>("Questions");
-            QUESTIONS_QUERY.whereEqualTo("Letter", WorkingLetter);
+            QUESTIONS_QUERY.whereEqualTo("Letter", GAME_LETTER);
             List<ParseObject> QUESTIONS_RESULT = QUESTIONS_QUERY.find();
 
             //Find the Letter
             ParseQuery<ParseObject> LETTER_QUERY = new ParseQuery<>("Letter");
-            LETTER_QUERY.whereEqualTo("objectId", WorkingLetter.getObjectId());
+            LETTER_QUERY.whereEqualTo("objectId", GAME_LETTER.getObjectId());
             List<ParseObject> LETTER_RESULT = LETTER_QUERY.find();
 
             if(QUESTIONS_RESULT==null||QUESTIONS_RESULT.size()==0){
                 Finalize(false);}
             else {
-                LETTER = LETTER_RESULT.get(0).getString("Letter");
+                LetterId = LETTER_RESULT.get(0).getString("Letter");
 
                 for (ParseObject JSON:QUESTIONS_RESULT){
                     ProcessQuery(JSON);}
@@ -306,7 +291,7 @@ public class GameManager {
             List<ParseObject> OptionsList = mParseQuery2.find();
 
             //Add new question to the set
-            QuestionsSet.add(new Question(Id, LETTER, questionAnswer, questionImage, toArray(OptionsList) ));
+            QuestionsSet.add(new Question(Id, LetterId, questionAnswer, questionImage, toArray(OptionsList) ));
 
             Log.d(TAG, "A JSON object was processed");
             Log.d(TAG,"Assets Loaded " + questionAnswer);
@@ -326,7 +311,7 @@ public class GameManager {
 
     }
 
-    private class SaveProgress extends AsyncTask<Void,Void,Void> implements Async{
+    private class SaveProgress extends AsyncTask<Void,Void,Void> implements AsyncRequest {
 
         private ProgressDialog pDialog;
 
@@ -337,29 +322,8 @@ public class GameManager {
         }
 
         @Override
-        public void Setup() {
-            pDialog = new ProgressDialog(mContext);
-            pDialog.setTitle("Saving this intent");
-            pDialog.setMessage("This may take a moment");
-            pDialog.setIndeterminate(false);
-            pDialog.show();
-        }
-
-        @Override
         protected Void doInBackground(Void... params) {
-            try {
-
-                Score = (float) ((nOK * 100.0) / (nOK + nWrong));
-                Progress.put("Score",Score);
-                Progress.put("Letter",WorkingLetter);
-                Progress.put("Teacher", ParseObject.createWithoutData("_User",mContext.getCurrentTeacher() ));
-                Progress.put("Module", MODULE);
-
-                Progress.save();
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            MakeRequest();
             return null;
         }
 
@@ -372,16 +336,34 @@ public class GameManager {
         }
 
         @Override
-        public void Query() throws ParseException {
-            return;
+        public void Setup() {
+            pDialog = new ProgressDialog(mContext);
+            pDialog.setTitle("Saving this intent");
+            pDialog.setMessage("This may take a moment");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
         }
+
         @Override
-        public void ProcessQuery(ParseObject JSON) throws ParseException {
-            return;
+        public void MakeRequest() {
+            Score = (float) ((nOK * 100.0) / (nOK + nWrong));
+            Progress.put("Score",Score);
+            Progress.put("Letter", GAME_LETTER);
+            Progress.put("Teacher", ParseObject.createWithoutData("_User",mContext.getCurrentTeacher() ));
+            Progress.put("Module", MODULE);
+
+            try {   Progress.save();    }
+            catch (ParseException e) {  e.printStackTrace();  }
+
+            Finalize(true);
         }
+
         @Override
         public void Finalize(boolean Success) {
-            return;
+            if(Success)
+                Log.d(TAG,"The document was saved successfully");
+            else
+                Log.d(TAG,"The document was not saved");
         }
 
     }

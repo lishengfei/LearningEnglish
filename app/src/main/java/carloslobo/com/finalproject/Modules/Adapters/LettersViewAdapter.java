@@ -1,7 +1,6 @@
 package carloslobo.com.finalproject.Modules.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import carloslobo.com.finalproject.Modules.ClassLetter;
-import carloslobo.com.finalproject.Modules.Demo.Information;
+import carloslobo.com.finalproject.Modules.Letter;
 import carloslobo.com.finalproject.Modules.Demo.RecyclerClickListener;
 import carloslobo.com.finalproject.R;
 
@@ -23,10 +20,10 @@ import carloslobo.com.finalproject.R;
 public class LettersViewAdapter extends RecyclerView.Adapter<LettersViewAdapter.CustomViewHolder>{
 
     private LayoutInflater mInflater;
-    private List<ClassLetter> data = new ArrayList<>();
+    private List<Letter> data = new ArrayList<>();
     private RecyclerClickListener mRecyclerClickListener;
 
-    public LettersViewAdapter(Context context, List<ClassLetter> data) {
+    public LettersViewAdapter(Context context, List<Letter> data) {
         this.mInflater = LayoutInflater.from(context);
         this.data = data;
     }
@@ -44,7 +41,7 @@ public class LettersViewAdapter extends RecyclerView.Adapter<LettersViewAdapter.
     }
 
     private void bindInfo(CustomViewHolder holder, int position){
-        ClassLetter i = data.get(position);
+        Letter i = data.get(position);
         holder.mLetter.setText("Letra: "+i.getLetter());
         holder.StudentTries.setText(i.getEntries()+" envíos");
 

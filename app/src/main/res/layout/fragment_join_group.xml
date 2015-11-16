@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Unirse a un grupo"
+        android:text="@string/JoinGroup"
         android:id="@+id/textView11"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="68dp"
@@ -37,15 +37,13 @@
             android:id="@+id/GroupName"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
             android:gravity="center_vertical|center_horizontal">
 
             <EditText
                 android:id="@+id/GroupName_Content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre del grupo"
+                android:hint="@string/GroupName"
                 android:inputType="text"
 
                 android:fontFamily="sans-serif-light"/>
@@ -54,11 +52,9 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Unirme"
+            android:text="@string/Join"
             android:id="@+id/joinGroupButton"
 
-            android:layout_below="@+id/GroupName"
-            android:layout_centerHorizontal="true"
             android:background="@drawable/button_primary"
 
             android:fontFamily="sans-serif-light"

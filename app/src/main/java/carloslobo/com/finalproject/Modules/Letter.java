@@ -3,13 +3,15 @@ package carloslobo.com.finalproject.Modules;
 /**
  * Created by camilo on 11/13/15.
  */
-public class ClassLetter {
+public class Letter {
+    private String LetterId;
     private String Letter;
     private int Entries;
     private boolean Locked;
 
 
-    public ClassLetter(String letter, int entries, boolean locked) {
+    public Letter(String letterId, String letter, int entries, boolean locked) {
+        LetterId = letterId;
         Letter = letter;
         Entries = entries;
         Locked = locked;
@@ -19,23 +21,15 @@ public class ClassLetter {
         return Letter;
     }
 
-    public void setLetter(String letter) {
-        Letter = letter;
-    }
-
     public int getEntries() {
         return Entries;
-    }
-
-    public void setEntries(int entries) {
-        Entries = entries;
     }
 
     public boolean isLocked() {
         return Locked;
     }
 
-    public void setLocked(boolean locked) {
-        Locked = locked;
+    public String getLetterId() {
+        return LetterId;
     }
 }

@@ -3,7 +3,6 @@ package carloslobo.com.finalproject.Fragments.Student;
 
 import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -12,15 +11,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import carloslobo.com.finalproject.Core.MainActivity;
-import carloslobo.com.finalproject.Fragments.Teacher.TeacherMenuFragment;
-import carloslobo.com.finalproject.Modules.Interfaces.Async;
+import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
+import carloslobo.com.finalproject.Modules.Interfaces.Communicator;
 import carloslobo.com.finalproject.Modules.Interfaces.Init;
 import carloslobo.com.finalproject.R;
 
@@ -42,12 +42,15 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
 
     private final static String TAG = StudentLetterMenuFragment.class.getName();
 
+    //Layout
     private ImageButton Introduction,Practice,Test;
-
     private FloatingActionButton JoinGroup;
     private TextView mUser;
     private ImageView mBanner;
-    private boolean NoGroup = false;
+
+    //Variables
+    private boolean NoGroup = true;
+    private boolean TestLock = true;
 
     public StudentLetterMenuFragment() {    }
 
@@ -58,7 +61,6 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
 
         initViews(rootView);
         initListeners();
-        ShowAppBarLayout();
 
         new GetData().execute();
 
@@ -89,26 +91,21 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
         JoinGroup.setOnClickListener(this);
     }
 
-    private void ShowAppBarLayout(){
-        AppBarLayout v = (AppBarLayout) getActivity().findViewById(R.id.test);
-        v.setExpanded(true, true);
-    }
-
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
 
-        FragmentTransaction mTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         MainActivity Activity = ((MainActivity) getActivity());
 
         switch (id){
             case R.id.introductionButton:
                 if(!NoGroup) {
-                     Activity.createGameManager();
-                    try {   Activity.getgManager().setWorkingLetter("8RBZaC0a0Z");}
+                    Activity.createGameManager();
+
+                    try {   Activity.getGManager().setGameLetter("8RBZaC0a0Z");}
                     catch (ParseException e) {    e.printStackTrace();    }
 
-                    Activity.getgManager().StartMode("Introduction");
+                    Activity.getGManager().Setup("Introduction");
                 }
                 else {
                     AlertStudent();}
@@ -117,11 +114,11 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
             case R.id.practiceButton:
                 if(!NoGroup)
                 {   Activity.createGameManager();
-                    try {   Activity.getgManager().setWorkingLetter("8RBZaC0a0Z");}
+
+                    try {   Activity.getGManager().setGameLetter("8RBZaC0a0Z");}
                     catch (ParseException e) {    e.printStackTrace();    }
 
-                    Activity.getgManager().StartMode("Practice");
-
+                    Activity.getGManager().Setup("Practice");
                 }
                 else {
                     AlertStudent();}
@@ -129,46 +126,57 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
             break;
 
             case R.id.testButton:
-                if(!NoGroup)
-                {   Activity.createGameManager();
-                    try {   Activity.getgManager().setWorkingLetter("8RBZaC0a0Z");}
+                if(NoGroup)
+                    AlertStudent();
+                else if(TestLock)
+                    PracticePending();
+                else {
+                    Activity.createGameManager();
+
+                    try {   Activity.getGManager().setGameLetter("8RBZaC0a0Z");}
                     catch (ParseException e) {    e.printStackTrace();    }
 
-                    Activity.getgManager().StartMode("Test");
-
+                    Activity.getGManager().Setup("Test");
                 }
-                else {
-                    AlertStudent();}
 
             break;
 
             case R.id.joinGroupButton:
                 if(NoGroup)
-                {   mTransaction.replace(R.id.main_container, new JoinGroupFragment(), "JoinGroup");
+                {   FragmentTransaction mTransaction = Activity.getSupportFragmentManager().beginTransaction();
+                    mTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+                    mTransaction.replace(R.id.main_container, new JoinGroupFragment(), "JoinGroup");
                     mTransaction.addToBackStack("JoinGroup");
-                    Log.d(TAG,"Student will join a group");}
+                    mTransaction.commit();
+
+                    Log.d(TAG, "Student will join a group");
+                }
                 else{
                     StopStudent();}
-
                 break;
         }
-
-        mTransaction.commit();
-        getActivity().getSupportFragmentManager().executePendingTransactions();
-
     }
 
 
     private void AlertStudent(){
-        Toast.makeText(getActivity(),"Debes pertenecer a un grupo primero." , Toast.LENGTH_SHORT).show();
+        Toast mToast = Toast.makeText(getActivity(), "Debes pertenecer a un grupo primero.", Toast.LENGTH_SHORT);
+        mToast.setGravity(Gravity.TOP, 0, 120);
+        mToast.show();
     }
 
     private void StopStudent(){
-        Toast.makeText(getActivity(),"Ya te has unido a un grupo." , Toast.LENGTH_SHORT).show();
+        Toast mToast =  Toast.makeText(getActivity(),"Ya te has unido a un grupo." , Toast.LENGTH_SHORT);
+        mToast.setGravity(Gravity.TOP, 0, 120);
+        mToast.show();
     }
 
+    private void PracticePending(){
+        Toast mToast =  Toast.makeText(getActivity(),"Debes realizar la práctica primero." , Toast.LENGTH_SHORT);
+        mToast.setGravity(Gravity.TOP, 0, 120);
+        mToast.show();
+    }
 
-    private class GetData extends AsyncTask<Void,Void,Void> implements Async {
+    private class GetData extends AsyncTask<Void,Void,Void> implements AsyncResponse {
         ProgressDialog pDialog;
 
         @Override
@@ -204,10 +212,9 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
             User.add(ParseUser.getCurrentUser());
 
             mParseQuery.whereContainsAll("Students", User);
-
             List<ParseObject> JSON_List = mParseQuery.find();
 
-            if(JSON_List==null||JSON_List.size()==0){
+            if(JSON_List == null || JSON_List.size() == 0){
                 Finalize(false);
             }
             else {
@@ -218,8 +225,20 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
         }
 
         @Override
-        public void ProcessQuery(ParseObject JSON) {
+        public void ProcessQuery(ParseObject JSON) throws ParseException {
             ((MainActivity) getActivity()).setStudentTeacher(JSON.getObjectId());
+
+            ParseQuery<ParseObject> GradesQuery = new ParseQuery<>("Grades");
+            GradesQuery.whereEqualTo("Module", "Practice");
+            List<ParseObject> GradesJSON = GradesQuery.find();
+
+            if(GradesJSON!=null) {
+                if(GradesJSON.size()!=0)
+                    TestLock = false;
+                else
+                    Log.d(TAG,"The student has the introduction pending.");
+            }
+
             Log.d(TAG, "A JSON object was processed");
         }
 
@@ -228,26 +247,20 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
             pDialog.dismiss();
 
             if(!Success){
-                Log.d(TAG,"Student doesn't belong to a group");
-                NoGroup = true;
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getActivity(), "No se encuentró un grupo asociado a tu ID.", Toast.LENGTH_SHORT).show();
+                        Toast mToast = Toast.makeText(getActivity(), "No se encontró un grupo asociado a tu ID.", Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.TOP, 0, 120);
+                        mToast.show();
                     }
                 });
+
+                Log.d(TAG, "Student doesn't belong to a group");
             }
             else {
+                NoGroup = false;
                 Log.d(TAG, "Student belongs to a group");
-
-                getActivity().runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity(),"Bienvenido " + ParseUser.getCurrentUser().getUsername() , Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
-
-
-
         }
 
     }

@@ -1,7 +1,6 @@
 package carloslobo.com.finalproject.Fragments.Student;
 
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
@@ -28,10 +27,12 @@ public class LetterIntroductionFragment extends Fragment implements Init,View.On
 
     private final static String TAG = LetterIntroductionFragment.class.getName();
 
+    //Layout
     private ImageView mImageView;
     private TextView mTextView;
     private Button mButton;
 
+    //Manager
     private GameManager GM;
 
     public LetterIntroductionFragment() {   }
@@ -40,7 +41,7 @@ public class LetterIntroductionFragment extends Fragment implements Init,View.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_letter_introduction, container, false);
 
-        GM = ((MainActivity) getActivity()).getgManager();
+        GM = ((MainActivity) getActivity()).getGManager();
 
         initViews(rootView);
         initListeners();
@@ -52,10 +53,10 @@ public class LetterIntroductionFragment extends Fragment implements Init,View.On
 
 
     @Override
-    public void initViews(View rootview) {
-        mImageView = (ImageView) rootview.findViewById(R.id.letterPreviewImage);
-        mTextView = (TextView) rootview.findViewById(R.id.WordExample);
-        mButton = (Button) rootview.findViewById(R.id.letterIntroductionButton);
+    public void initViews(View rootView) {
+        mImageView = (ImageView) rootView.findViewById(R.id.letterPreviewImage);
+        mTextView = (TextView) rootView.findViewById(R.id.WordExample);
+        mButton = (Button) rootView.findViewById(R.id.letterIntroductionButton);
 
         Question CurrentQuestion = GM.getQuestion(GM.getCurrentExercise());
         mImageView.setImageBitmap(CurrentQuestion.getImage());
@@ -68,8 +69,8 @@ public class LetterIntroductionFragment extends Fragment implements Init,View.On
     }
 
     private void HideAppBarLayout() {
-        AppBarLayout v = (AppBarLayout) getActivity().findViewById(R.id.test);
-        v.setExpanded(false, true);
+        AppBarLayout APL = (AppBarLayout) getActivity().findViewById(R.id.test);
+        APL.setExpanded(false, true);
     }
 
     private void initGestures(View rootView) {
@@ -93,14 +94,11 @@ public class LetterIntroductionFragment extends Fragment implements Init,View.On
                         final int SWIPE_MIN_DISTANCE = 120;
                         final int SWIPE_THRESHOLD_VELOCITY = 200;
 
-                        if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                            Log.i(TAG, "Right to Left");
-
-                            if (GM.getCurrentExercise() < GM.getExercisesNumber())
-                                GM.FetchNewQuestion();
-                            else
-                                GM.Terminate();
-
+                        if(e1!=null && e2!=null) {
+                            if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                                Log.i(TAG, "Right to Left");
+                                GM.SaveAnswer(null);
+                            }
                         }
 
                         return super.onFling(e1, e2, velocityX, velocityY);
@@ -117,18 +115,13 @@ public class LetterIntroductionFragment extends Fragment implements Init,View.On
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View view) {
+        int id = view.getId();
 
         switch (id) {
             case R.id.letterIntroductionButton:
+                GM.SaveAnswer(null);
                 Log.d(TAG, "The student understood the exercise");
-
-                if (GM.isCompleted())
-                    GM.Finish();
-                else
-                    GM.FetchNewQuestion();
-                break;
         }
     }
 

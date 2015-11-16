@@ -5,18 +5,12 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-
-import org.w3c.dom.Text;
 
 import carloslobo.com.finalproject.Core.MainActivity;
 import carloslobo.com.finalproject.Modules.GameManager;
@@ -30,14 +24,16 @@ import carloslobo.com.finalproject.R;
 public class LetterTestFragment extends Fragment implements Init,View.OnClickListener{
 
     private final static String TAG = LetterTestFragment.class.getName();
-    private GameManager GM;
 
+    //Layout
     private TextInputLayout Answer;
     private ImageView mImageView;
     private Button mButton;
 
-    public LetterTestFragment() {
-    }
+    //Manager
+    private GameManager GM;
+
+    public LetterTestFragment() {   }
 
 
     @Override
@@ -45,7 +41,7 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
 
         View rootView = inflater.inflate(R.layout.fragment_letter_test, container, false);
 
-        GM = ((MainActivity) getActivity()).getgManager();
+        GM = ((MainActivity) getActivity()).getGManager();
 
         initViews(rootView);
         initListeners();
@@ -56,11 +52,11 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
 
 
     @Override
-    public void initViews(View rootview) {
-        Answer = (TextInputLayout) rootview.findViewById(R.id.studentAnswer);
-        mButton = (Button) rootview.findViewById(R.id.saveTestButton);
+    public void initViews(View rootView) {
+        Answer = (TextInputLayout) rootView.findViewById(R.id.studentAnswer);
+        mButton = (Button) rootView.findViewById(R.id.saveTestButton);
 
-        mImageView = (ImageView) rootview.findViewById(R.id.testImage);
+        mImageView = (ImageView) rootView.findViewById(R.id.testImage);
 
         Question CurrentQuestion = GM.getQuestion(GM.getCurrentExercise());
         mImageView.setImageBitmap(CurrentQuestion.getImage());
@@ -84,11 +80,9 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
     }
 
     private void HideAppBarLayout(){
-        AppBarLayout v = (AppBarLayout) getActivity().findViewById(R.id.test);
-        v.setExpanded(false, true);
+        AppBarLayout APL = (AppBarLayout) getActivity().findViewById(R.id.test);
+        APL.setExpanded(false, true);
     }
-
-
 
     @Override
     public void onClick(View v) {
@@ -96,7 +90,7 @@ public class LetterTestFragment extends Fragment implements Init,View.OnClickLis
         switch (id){
             case R.id.saveTestButton:
                 if(validateInput()){
-                    Log.d(TAG,"Student answered the question.");
+                    Log.d(TAG,"The student answered the question.");
 
                     GM.SaveAnswer(Answer.getEditText().getText().toString());
 

@@ -1,0 +1,63 @@
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="carloslobo.com.finalproject.Fragments.WelcomeFragment"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/Welcome"
+            android:id="@+id/textView2"
+            android:textColor="@color/White"
+            android:textSize="35sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_gravity="center_horizontal" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioGroup"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="25dp">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/StudentRadioButton"
+                android:id="@+id/studentRadio"
+                android:checked="false"
+                android:textColor="@color/White"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-light"
+                android:clickable="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/TeacherRadioButton"
+                android:id="@+id/teacherRadio"
+                android:checked="false"
+                android:textColor="@color/White"
+                android:layout_marginTop="25dp"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-light" />
+        </RadioGroup>
+    </LinearLayout>
+
+</LinearLayout>
