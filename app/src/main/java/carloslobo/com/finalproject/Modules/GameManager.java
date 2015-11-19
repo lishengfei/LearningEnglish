@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +27,8 @@ import carloslobo.com.finalproject.Core.MainActivity;
 import carloslobo.com.finalproject.Fragments.Student.LetterIntroductionFragment;
 import carloslobo.com.finalproject.Fragments.Student.LetterPracticeFragment;
 import carloslobo.com.finalproject.Fragments.Student.LetterTestFragment;
+import carloslobo.com.finalproject.Fragments.Student.ResultDialog;
+import carloslobo.com.finalproject.Fragments.Teacher.ReleaseLetterDialog;
 import carloslobo.com.finalproject.Modules.Interfaces.AsyncRequest;
 import carloslobo.com.finalproject.Modules.Interfaces.AsyncResponse;
 import carloslobo.com.finalproject.R;
@@ -32,7 +36,7 @@ import carloslobo.com.finalproject.R;
 /**
  * Created by camilo on 11/14/15.
  */
-public class GameManager {
+public class GameManager{
 
     //Basic
     private final String TAG = GameManager.class.getName();
@@ -138,8 +142,9 @@ public class GameManager {
             Progress.put("Letter", GAME_LETTER);
             Progress.put("Teacher", ParseObject.createWithoutData("_User", mContext.getCurrentTeacher()));
             Progress.put("Module", MODULE);
-
             new SaveProgress().execute();
+
+
         }else {
             Terminate();
             mContext.onBackPressed();
@@ -332,6 +337,20 @@ public class GameManager {
             super.onPostExecute(aVoid);
             pDialog.dismiss();
             Terminate();
+
+            Bundle args = new Bundle();
+            args.putString("Good", ""+nOK);
+            args.putString("Wrong",""+nWrong);
+            args.putString("Score",""+Score);
+
+            ResultDialog Popup = new ResultDialog();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                Popup.setArguments(args);
+                Popup.show(mContext.getFragmentManager(), "Result Fragment");
+            }
+
+
             mContext.onBackPressed();
         }
 
