@@ -61,12 +61,11 @@ public class GameManager{
     private int nOK;
     private float Score;
     private String MODULE;
-
+    private ParseObject Group;
 
     public GameManager(MainActivity mContext){
         this.mContext = mContext;
         this.Progress = new ParseObject("Grades");
-        Progress.put("Student", ParseUser.getCurrentUser());
         this.nExercises =  3;
     }
 
@@ -137,14 +136,7 @@ public class GameManager{
     public void Finish(){
 
         if(!MODULE.equals("Introduction")){
-            Score = (float) ((nOK * 100.0) / (nOK + nWrong));
-            Progress.put("Score",Score);
-            Progress.put("Letter", GAME_LETTER);
-            Progress.put("Teacher", ParseObject.createWithoutData("_User", mContext.getCurrentTeacher()));
-            Progress.put("Module", MODULE);
             new SaveProgress().execute();
-
-
         }else {
             Terminate();
             mContext.onBackPressed();
@@ -155,21 +147,23 @@ public class GameManager{
     public void SaveAnswer(String Input){
 
         if (this.isCompleted()) {
+            this.UpdateProgress(Input);
             this.Finish();}
         else
             {
-                if(!MODULE.equals("Introduction"))
-                    this.UpdateProgress(Input);
+                this.UpdateProgress(Input);
                 this.FetchNewQuestion();
             }
     }
 
     private void UpdateProgress(String Input){
+        if(!MODULE.equals("Introduction")) {
             Question CurrentQuestion = getQuestion(getCurrentExercise());
-            if(Input.equals(CurrentQuestion.getAnswer()))
-                Progress.put("Good",++nOK);
+            if (Input.equals(CurrentQuestion.getAnswer()))
+                Progress.put("Good", ++nOK);
             else
-                Progress.put("Wrong",++nWrong);
+                Progress.put("Wrong", ++nWrong);
+        }
     }
 
     public void FetchNewQuestion(){
@@ -368,8 +362,12 @@ public class GameManager{
             Score = (float) ((nOK * 100.0) / (nOK + nWrong));
             Progress.put("Score",Score);
             Progress.put("Letter", GAME_LETTER);
-            Progress.put("Teacher", ParseObject.createWithoutData("_User",mContext.getCurrentTeacher() ));
+            Progress.put("Teacher", ParseObject.createWithoutData("_User", mContext.getCurrentTeacher()));
+            Progress.put("Group",ParseObject.createWithoutData("Group",mContext.getCurrentGroup()));
             Progress.put("Module", MODULE);
+
+            ParseUser _User = ParseUser.getCurrentUser();
+            Progress.put("Student", _User);
 
             try {   Progress.save();    }
             catch (ParseException e) {  e.printStackTrace();  }

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager mManager  = getSupportFragmentManager();
     private GameManager gManager;
     private String CurrentTeacher;
+    private String CurrentGroup;
 
     public GameManager getGManager() {
         return gManager;
@@ -56,6 +57,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public String getCurrentTeacher() {
         return CurrentTeacher;
+    }
+
+    public void setCurrentGroup(String Id){
+        CurrentGroup = Id;
+    }
+
+    public String getCurrentGroup(){
+        return CurrentGroup;
     }
 
     @Override

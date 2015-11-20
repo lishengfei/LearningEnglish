@@ -60,7 +60,6 @@ public class StudentLoginFragment extends Fragment implements Init, View.OnClick
         String user = mUser.getEditText().getText().toString();
 
         if (user.isEmpty()) {
-            if (user.isEmpty())
                 mUser.setError("El campo de usuario esta vacío");
             return false;
         }
@@ -76,7 +75,7 @@ public class StudentLoginFragment extends Fragment implements Init, View.OnClick
             case R.id.studentLoginButton:
                 Log.d(TAG,"Student loggin attempt");
 
-                //if(validateInput())
+                if(validateInput())
                     LogInAttempt();
             break;
         }

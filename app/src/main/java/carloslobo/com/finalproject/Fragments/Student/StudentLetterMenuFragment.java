@@ -226,7 +226,8 @@ public class StudentLetterMenuFragment extends Fragment implements Init,View.OnC
 
         @Override
         public void ProcessQuery(ParseObject JSON) throws ParseException {
-            ((MainActivity) getActivity()).setStudentTeacher(JSON.getObjectId());
+            ((MainActivity) getActivity()).setCurrentGroup(JSON.getObjectId());
+            ((MainActivity) getActivity()).setStudentTeacher( ((ParseObject) JSON.get("Teacher")).getObjectId()  );
 
             ParseQuery<ParseObject> GradesQuery = new ParseQuery<>("Grades");
             GradesQuery.whereEqualTo("Module", "Practice");
