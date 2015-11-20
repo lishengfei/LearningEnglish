@@ -78,7 +78,7 @@ public class TeacherLoginFragment extends Fragment implements Init,View.OnClickL
             case R.id.teacherLoginButton:
                 Log.d(TAG,"Teacher login attempt");
 
-                //if (validateInput())
+                if (validateInput())
                     LogInAttempt();
 
                 break;
@@ -87,11 +87,9 @@ public class TeacherLoginFragment extends Fragment implements Init,View.OnClickL
 
     //I should do an internal class
     private void LogInAttempt(){
-        //String userName = mUser.getEditText().getText().toString();
-        //String password = mPassword.getEditText().getText().toString();
+        String userName = mUser.getEditText().getText().toString();
+        String password = mPassword.getEditText().getText().toString();
 
-        String userName = "DerekBanas";
-        String password = "derek";
 
         ParseUser.logInInBackground(userName,password, new LogInCallback() {
             @Override

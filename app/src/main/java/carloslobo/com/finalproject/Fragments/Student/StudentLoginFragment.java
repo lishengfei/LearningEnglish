@@ -83,8 +83,7 @@ public class StudentLoginFragment extends Fragment implements Init, View.OnClick
     }
 
     private void LogInAttempt(){
-        //String userName = mUser.getEditText().getText().toString();
-        String userName = "camilo3";
+        String userName = mUser.getEditText().getText().toString();
         String password = userName;
 
         ParseUser.logInInBackground(userName,password, new LogInCallback() {
